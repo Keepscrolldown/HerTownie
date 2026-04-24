@@ -475,7 +475,7 @@ app.post("/api/auth/forgot-password", async (req, res) => {
     await user.save();
 
 
-const resetLink = `http://localhost:5000/reset-password.html?token=${token}`;
+const resetLink = `https://hertownie.vercel.app/reset-password.html?token=${token}`;
     // For now (DEV), return link
     res.json({ success: true, debugLink: resetLink });
 });
