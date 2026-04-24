@@ -24,8 +24,7 @@ const Category = require("../models/Category");
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "../public")));
-
+app.use(express.static(path.join(process.cwd(), "public")));
 /* ================= AUTH MIDDLEWARE ================= */
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers["authorization"];
@@ -543,7 +542,7 @@ app.post("/api/auth/reset-password", async (req, res) => {
 });
 
 app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/index.html"));
+res.sendFile(path.join(process.cwd(), "public", "index.html"));
 });    
 
 module.exports = app;
