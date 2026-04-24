@@ -554,7 +554,8 @@
       }
 
       function applyFilter(categoryValue) {
-        filterAndRender();
+        const term = document.getElementById("product-search")?.value || "";
+        filterAndRender(term.toLowerCase());
       }
 
       function filterAndRender(term = "") {
@@ -608,7 +609,7 @@
             return `
             <div class="group cursor-pointer product-card ${isOutOfStock ? "opacity-60 grayscale" : ""}" data-id="${p._id}">
                 <div class="relative aspect-[3/4] overflow-hidden bg-zinc-50 mb-4">
-                    <img src="${p.image}" class="w-full h-full object-cover transition duration-1000 ${isOutOfStock ? "" : "group-hover:scale-105"}">
+                    <img src="${p.image?.[0] || ''}" class="w-full h-full object-cover transition duration-1000 ${isOutOfStock ? "" : "group-hover:scale-105"}">
                     
                     ${
                       isOutOfStock
@@ -716,7 +717,9 @@
 
         document.getElementById("modal-img").src = product.image;
         document.getElementById("modal-cat").innerText =
-          product.category || "Premium Collection";
+        typeof product.category === "object"
+          ? product.category.name
+          : product.category || "Premium Collection";
         document.getElementById("modal-name").innerText = product.name;
         document.getElementById("modal-price").innerText =
           `₹${product.price.toLocaleString("en-IN")}`;
