@@ -287,10 +287,7 @@ const connectDB = async () => {
 };
 
 // run on every request (serverless style)
-app.use(async (req, res, next) => {
-    await connectDB();
-    next();
-});
+connectDB(); // run once
 
 /* ================= CATEGORY ROUTES ================= */
 
