@@ -1,5 +1,5 @@
 /* ================= GLOBAL CONFIG ================= */
-const API_URL = "http://localhost:5000"; // Fixed to your backend port
+const API_URL = "https://hertownie.vercel.app"; // Fixed to your backend port
 const PRODUCT_API = `${API_URL}/api/products`;
 const ORDER_API = `${API_URL}/api/orders`;
 const COUPON_API = `${API_URL}/api/coupons`;
