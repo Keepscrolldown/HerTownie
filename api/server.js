@@ -538,6 +538,31 @@ app.post("/api/auth/reset-password", async (req, res) => {
     }
 });
 
+app.post("/api/auth/google-login", async (req, res) => {
+    try {
+        const { email, firstName, lastName } = req.body;
+        
+        // Find user or create new one if they don't exist
+        let user = await User.findOne({ email });
+        
+        if (!user) {
+            user = new User({ 
+                firstName, 
+                lastName, 
+                email, 
+                password: crypto.randomBytes(16).toString("hex"), // Random pass for social users
+                role: "user" 
+            });
+            await user.save();
+        }
+
+        const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: "24h" });
+        res.json({ success: true, token, user: { name: user.firstName } });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Google login failed" });
+    }
+});
+
 app.get("*", (req, res) => {
 res.sendFile(path.join(process.cwd(), "public", "index.html"));
 });    
