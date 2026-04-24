@@ -153,25 +153,20 @@
     </div>
 
     <div class="mt-10 pt-10 border-t border-gray-100 text-center">
-      <p class="text-[10px] font-bold uppercase text-gray-400 tracking-widest mb-6">
-        Or continue with
-      </p>
-      <div class="flex justify-center gap-4">
-        <button class="p-4 border border-gray-100 hover:bg-gray-50 transition w-full flex justify-center">
-          <svg class="w-4 h-4" viewBox="0 0 24 24">
-            <path
-              d="M12.48 10.92v3.28h7.84c-.24 1.84-.909 3.16-2.122 4.155-1.213.995-2.915 1.76-5.718 1.76-4.664 0-8.487-3.714-8.487-8.115s3.823-8.115 8.487-8.115c2.49 0 4.416.945 5.762 2.22l2.307-2.307C18.423 1.497 15.748 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.57 0 6.264-1.155 8.355-3.255 2.112-2.112 2.78-5.07 2.78-7.425 0-.714-.06-1.397-.175-2.032H12.48z"
-              fill="currentColor" />
-          </svg>
-        </button>
-        <button class="p-4 border border-gray-100 hover:bg-gray-50 transition w-full flex justify-center">
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <path
-              d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-          </svg>
-        </button>
-      </div>
-    </div>
+  <p class="text-[10px] font-bold uppercase text-gray-400 tracking-widest mb-6">
+    Or continue with
+  </p>
+  <div class="flex justify-center">
+    <button onclick="handleGoogleLogin()" class="p-4 border border-gray-100 hover:bg-gray-50 transition w-full flex justify-center items-center gap-3">
+      <svg class="w-4 h-4" viewBox="0 0 24 24">
+        <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.909 3.16-2.122 4.155-1.213.995-2.915 1.76-5.718 1.76-4.664 0-8.487-3.714-8.487-8.115s3.823-8.115 8.487-8.115c2.49 0 4.416.945 5.762 2.22l2.307-2.307C18.423 1.497 15.748 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.57 0 6.264-1.155 8.355-3.255 2.112-2.112 2.78-5.07 2.78-7.425 0-.714-.06-1.397-.175-2.032H12.48z" fill="currentColor" />
+      </svg>
+      <span class="text-[10px] font-black uppercase tracking-widest">Google Account</span>
+    </button>
+  </div>
+</div>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
   </div>
 
   <script>
@@ -354,6 +349,56 @@
         alert("Connection failed. Check your terminal for backend errors.");
       }
     }
+
+
+
+    function handleGoogleLogin() {
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: '879670858755-hfiscma23ck5k42ap05vef3ajpjmne5v.apps.googleusercontent.com', // Get this from Google Cloud Console
+    scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
+    callback: async (response) => {
+      if (response.access_token) {
+        // Now we fetch user info from Google using the token
+        try {
+          const res = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${response.access_token}`);
+          const userInfo = await res.json();
+
+          // Send this info to your backend to login/signup
+          socialLoginBackend(userInfo);
+        } catch (err) {
+          console.error("Google Auth Error:", err);
+        }
+      }
+    },
+  });
+  client.requestAccessToken();
+}
+
+async function socialLoginBackend(googleUser) {
+  try {
+    const response = await fetch("/api/auth/google-login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: googleUser.email,
+        firstName: googleUser.given_name,
+        lastName: googleUser.family_name,
+        googleId: googleUser.sub
+      }),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("userName", data.user.name);
+      window.location.href = "index.html";
+    } else {
+      alert(data.message);
+    }
+  } catch (err) {
+    alert("Backend connection failed.");
+  }
+}
   </script>
 </body>
 
