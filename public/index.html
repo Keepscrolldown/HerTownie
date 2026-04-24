@@ -709,19 +709,22 @@
             const res = await fetch(`${API_URL}/api/products`);
             allProducts = await res.json();
             grid.innerHTML = allProducts
-              .slice(0, 8)
-              .map(
-                (p) => `
-                      <div class="group cursor-pointer" onclick="openModal('${p._id}')">
-                          <div class="relative aspect-[3/4] overflow-hidden bg-gray-50 mb-4">
-                              <img src="${p.image}" class="w-full h-full object-cover transition duration-1000 group-hover:scale-105"/>
-                              <button class="absolute bottom-4 left-4 right-4 bg-white/90 py-3 opacity-0 group-hover:opacity-100 transition uppercase text-[10px] font-bold tracking-widest">+ Quick Add</button>
-                          </div>
-                          <h3 class="font-bold text-[11px] uppercase tracking-wider">${p.name}</h3>
-                          <p class="text-sm">₹${p.price.toLocaleString()}</p>
-                      </div>`,
-              )
-              .join("");
+            .slice(0, 8)
+            .map(p => {
+                // Log the URL to the console to see what is actually being loaded
+                console.log(`Loading image for ${p.name}:`, p.image);
+                
+                const imageSrc = p.image || 'https://via.placeholder.com/300x400?text=No+Image';
+                
+                return `
+                  <div class="group cursor-pointer" onclick="openModal('${p._id}')">
+                      <div class="relative aspect-[3/4] overflow-hidden bg-gray-50 mb-4">
+                          <img src="${imageSrc}" class="w-full h-full object-cover transition duration-1000 group-hover:scale-105"/>
+                          ...
+                      </div>
+                      ...
+                  </div>`;
+            }).join("");
           } catch (e) {
             grid.innerHTML = "<p class='col-span-full text-center'>Offline.</p>";
           }
