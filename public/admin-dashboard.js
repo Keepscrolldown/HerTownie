@@ -249,7 +249,7 @@ async function updateProduct() {
         price: Number(document.getElementById("edit-p-price").value),
         stock: Number(document.getElementById("edit-p-stock").value),
         description: document.getElementById("edit-p-desc")?.value || "",
-        images: [document.getElementById("edit-p-image").value], // Must be array
+        image: [document.getElementById("edit-p-image").value], // Must be array
         category: document.getElementById("edit-p-category").value, // Must be ObjectId
         featured: document.getElementById("edit-p-featured")?.checked || false
     };
@@ -284,7 +284,7 @@ async function saveProduct(e) {
         price: Number(document.getElementById("p-price").value),
         stock: Number(document.getElementById("p-stock").value),
         description: document.getElementById("p-desc")?.value || "",
-        images: [document.getElementById("p-image").value], // Schema expects Array [String]
+        image: [document.getElementById("p-image").value], // Schema expects Array [String]
         category: document.getElementById("p-category").value, // Must be the Category _id
         featured: document.getElementById("p-featured")?.checked || false
     };
