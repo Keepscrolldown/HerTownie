@@ -336,8 +336,8 @@
                 discount = Math.round(subtotal * (data.value / 100));
 
                 // ✅ Apply max discount cap
-                if (data.maxDiscount) {
-                    discount = Math.min(discount, data.maxDiscount);
+                if (data.maxdiscount) {
+                    discount = Math.min(discount, data.maxdiscount);
                 }
             } else {
                 discount = data.value;
