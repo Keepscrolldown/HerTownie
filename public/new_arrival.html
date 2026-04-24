@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Arrivals | HERTOWNIE Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Smooth Transitions */
+        .cart-open { overflow: hidden; }
+        #cart-sidebar { transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .cart-open #cart-sidebar { transform: translateX(0) !important; }
+        .cart-open #cart-overlay { display: block; opacity: 1; }
+        
+        .size-btn.active { background: black; color: white; border-color: black; }
+        
+        /* Premium Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 2px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #000; }
+        
+        /* Animation for New Badge */
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .new-badge { animation: pulse-soft 2s infinite; }
+    </style>
+</head>
+
+<body class="bg-white text-black antialiased custom-scrollbar">
+
+    <header class="sticky top-0 z-[100] bg-white/90 backdrop-blur-md border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 md:px-8 h-20 md:h-24 flex justify-between items-center">
+            <div class="flex items-center space-x-8">
+                <h1 class="text-3xl font-black tracking-tighter cursor-pointer" onclick="location.href='index.html'">HERTOWNIE</h1>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="collection.html" class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black transition">The Collection</a>
+                </nav>
+            </div>
+
+            <div class="flex items-center space-x-10 uppercase text-xs font-bold tracking-widest">
+                <button class="relative hover:opacity-50 transition" onclick="toggleCart(true)">
+                    Bag <span id="cart-count" class="bg-black text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full absolute -top-2 -right-5">0</span>
+                </button>
+                <div id="auth-section">
+                    <a href="login.html" class="hover:opacity-50">Login</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 md:px-8 py-20">
+        <section class="mb-32 text-center">
+            <h2 class="text-[10px] font-black uppercase tracking-[0.8em] text-zinc-400 mb-6 new-badge italic">Recently Dropped</h2>
+            <h1 class="text-6xl md:text-8xl font-light uppercase tracking-tighter leading-none mb-10">The Late <br> <span class="font-black italic">Arrivals</span></h1>
+            <p class="text-zinc-500 text-sm max-w-lg mx-auto leading-relaxed">The final 5 additions to our seasonal cycle. Crafted for the minimalist, designed for the bold. Once exhausted, these silhouettes will not return.</p>
+        </section>
+
+        <div id="new-arrivals-grid" class="grid grid-cols-1 md:grid-cols-5 gap-8">
+            <div class="col-span-full text-center py-24 opacity-30 text-xs tracking-[0.3em] font-bold uppercase">Syncing New Threads...</div>
+        </div>
+    </main>
+
+    <div id="modal-overlay" class="fixed inset-0 bg-black/70 z-[300] hidden opacity-0 transition-opacity backdrop-blur-sm" onclick="closeModal()"></div>
+    <div id="product-modal" class="fixed inset-0 z-[301] hidden flex items-center justify-center p-4">
+        <div id="product-modal-content" class="bg-white max-w-6xl w-full max-h-[90vh] overflow-hidden md:flex shadow-2xl relative translate-y-10 transition-transform">
+             <button onclick="closeModal()" class="absolute top-8 right-10 text-5xl font-thin z-10 hover:rotate-90 transition-transform duration-300">&times;</button>
+             <div class="md:w-1/2 bg-zinc-50"><img id="modal-img" src="" class="w-full h-full object-cover"></div>
+             <div class="md:w-1/2 p-10 md:p-16 flex flex-col justify-between overflow-y-auto custom-scrollbar">
+                <div>
+                    <p id="modal-cat" class="text-xs text-zinc-400 uppercase tracking-[0.4em] font-bold mb-4"></p>
+                    <h2 id="modal-name" class="text-4xl font-light uppercase tracking-tighter leading-tight mb-6"></h2>
+                    <p id="modal-price" class="text-3xl font-bold text-zinc-900 mb-8"></p>
+                    <p id="modal-desc" class="text-sm text-zinc-500 leading-relaxed mb-10"></p>
+                </div>
+                <div class="space-y-6">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Select Silhouette Size</p>
+                    <div class="flex gap-4">
+                        <button onclick="selectSize(this)" class="size-btn flex-1 border border-zinc-200 py-4 text-xs font-bold transition">S</button>
+                        <button onclick="selectSize(this)" class="size-btn flex-1 border border-zinc-200 py-4 text-xs font-bold transition">M</button>
+                        <button onclick="selectSize(this)" class="size-btn flex-1 border border-zinc-200 py-4 text-xs font-bold transition">L</button>
+                        <button onclick="selectSize(this)" class="size-btn flex-1 border border-zinc-200 py-4 text-xs font-bold transition">XL</button>
+                    </div>
+                    <button id="modal-add-btn" class="w-full bg-black text-white py-6 font-bold uppercase text-[10px] tracking-[0.4em] hover:bg-zinc-800 transition">Add to Bag</button>
+                </div>
+             </div>
+        </div>
+    </div>
+
+    <div id="cart-overlay" class="fixed inset-0 bg-black/40 z-[400] hidden opacity-0 transition-opacity backdrop-blur-sm" onclick="toggleCart(false)"></div>
+    <aside id="cart-sidebar" class="fixed top-0 right-0 w-full md:w-[450px] h-full bg-white z-[401] shadow-2xl transform translate-x-full transition-transform duration-500 flex flex-col">
+        <div class="p-8 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="text-xs font-black uppercase tracking-[0.4em]">Your Bag</h3>
+            <button onclick="toggleCart(false)" class="text-2xl font-thin hover:rotate-90 transition-transform">&times;</button>
+        </div>
+        <div id="cart-items-container" class="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar"></div>
+        <div class="p-8 border-t border-gray-100 space-y-6">
+            <div class="flex justify-between items-end">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Total</span>
+                <span id="cart-total" class="text-2xl font-black">₹0</span>
+            </div>
+            <button onclick="location.href='checkout.html'" class="w-full bg-black text-white py-6 text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-zinc-800 transition">Checkout</button>
+        </div>
+    </aside>
+
+    <script>
+        const API_URL = "http://localhost:5000";
+        let allItems = [];
+        let selectedSize = "";
+        let cart = JSON.parse(localStorage.getItem('clothify_bag')) || [];
+
+        /* LOAD DATA */
+        async function loadArrivals() {
+            const grid = document.getElementById("new-arrivals-grid");
+            try {
+                const res = await fetch(`${API_URL}/api/products`);
+                const products = await res.json();
+                allItems = products;
+                
+                // Taking the 5 most recent (assuming API sorts by newest)
+                const latest = products.slice(0, 5);
+                renderGrid(latest);
+            } catch (e) {
+                grid.innerHTML = `<p class="col-span-full text-center py-20 text-red-500 uppercase text-[10px] font-bold">Failed to Fetch Inventory</p>`;
+            }
+        }
+
+        function renderGrid(products) {
+            const grid = document.getElementById("new-arrivals-grid");
+            grid.innerHTML = products.map(p => `
+                <div class="group cursor-pointer">
+                    <div class="relative aspect-[3/4] overflow-hidden bg-zinc-50 mb-6" onclick="openModal('${p._id}')">
+                        <img src="${p.image}" class="w-full h-full object-cover transition duration-1000 group-hover:scale-110">
+                        <div class="absolute top-4 left-4 bg-black text-white text-[8px] font-black uppercase px-3 py-1 tracking-widest">New Arrival</div>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="font-bold text-[11px] uppercase tracking-wider mb-1">${p.name}</h3>
+                        <p class="text-sm font-light text-zinc-400 tracking-tighter">₹${p.price.toLocaleString()}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* MODAL LOGIC */
+        function openModal(id) {
+            const product = allItems.find(p => p._id === id);
+            if (!product) return;
+
+            document.getElementById("modal-img").src = product.image;
+            document.getElementById("modal-name").innerText = product.name;
+            document.getElementById("modal-cat").innerText = product.category || "Premium Essential";
+            document.getElementById("modal-price").innerText = `₹${product.price.toLocaleString()}`;
+            document.getElementById("modal-desc").innerText = product.description || "A masterclass in modern tailoring and minimalist design.";
+            
+            selectedSize = "";
+            document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("active"));
+            
+            document.getElementById("modal-add-btn").onclick = () => {
+                if(!selectedSize) return alert("Select a size");
+                addToCart(product, selectedSize);
+                closeModal();
+            };
+
+            document.getElementById("modal-overlay").classList.remove("hidden");
+            document.getElementById("product-modal").classList.remove("hidden");
+            setTimeout(() => {
+                document.getElementById("modal-overlay").style.opacity = "1";
+                document.getElementById("product-modal-content").style.transform = "translateY(0)";
+            }, 10);
+        }
+
+        function closeModal() {
+            document.getElementById("modal-overlay").style.opacity = "0";
+            document.getElementById("product-modal-content").style.transform = "translateY(40px)";
+            setTimeout(() => {
+                document.getElementById("product-modal").classList.add("hidden");
+                document.getElementById("modal-overlay").classList.add("hidden");
+            }, 500);
+        }
+
+        function selectSize(btn) {
+            document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            selectedSize = btn.innerText;
+        }
+
+        /* BAG LOGIC */
+        function toggleCart(open) {
+            if(open) {
+                document.body.classList.add("cart-open");
+                renderCart();
+            } else {
+                document.body.classList.remove("cart-open");
+            }
+        }
+
+        function addToCart(product, size) {
+            const cartId = `${product._id}-${size}`;
+            const existing = cart.find(i => i.cartId === cartId);
+            if(existing) existing.quantity += 1;
+            else cart.push({...product, cartId, size, quantity: 1});
+            
+            updateUI();
+            toggleCart(true);
+        }
+
+        function updateUI() {
+            localStorage.setItem("clothify_bag", JSON.stringify(cart));
+            const count = cart.reduce((a, b) => a + b.quantity, 0);
+            document.getElementById("cart-count").innerText = count;
+        }
+
+        function renderCart() {
+            const container = document.getElementById("cart-items-container");
+            const totalEl = document.getElementById("cart-total");
+            if(cart.length === 0) {
+                container.innerHTML = `<div class="h-64 flex items-center justify-center opacity-20 text-[10px] font-bold uppercase tracking-widest">Empty Bag</div>`;
+                totalEl.innerText = "₹0";
+                return;
+            }
+            let total = 0;
+            container.innerHTML = cart.map(item => {
+                total += item.price * item.quantity;
+                return `
+                    <div class="flex gap-6">
+                        <div class="w-20 h-24 bg-zinc-50 overflow-hidden"><img src="${item.image}" class="w-full h-full object-cover"></div>
+                        <div class="flex-1 flex flex-col justify-between">
+                            <div class="flex justify-between font-black uppercase text-[10px] tracking-wider">
+                                <span>${item.name}</span>
+                                <button onclick="removeItem('${item.cartId}')" class="text-zinc-300 hover:text-black">×</button>
+                            </div>
+                            <div class="flex justify-between items-end">
+                                <span class="text-[9px] text-zinc-400 font-bold uppercase">Size: ${item.size} | Qty: ${item.quantity}</span>
+                                <span class="text-xs font-black">₹${(item.price * item.quantity).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>`;
+            }).join('');
+            totalEl.innerText = `₹${total.toLocaleString()}`;
+        }
+
+        function removeItem(id) {
+            cart = cart.filter(i => i.cartId !== id);
+            updateUI();
+            renderCart();
+        }
+
+        window.onload = () => {
+            loadArrivals();
+            updateUI();
+        };
+    </script>
+</body>
+</html>

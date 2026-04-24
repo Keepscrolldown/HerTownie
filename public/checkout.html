@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | HERTOWNIE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        input:focus {
+            border-color: #000 !important;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .payment-selected {
+            border-color: black !important;
+            border-width: 2px !important;
+        }
+
+        #coupon-input {
+            text-transform: uppercase;
+        }
+
+        #coupon-input::placeholder {
+            text-transform: none;
+        }
+    </style>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+
+<body class="bg-[#fafafa] antialiased">
+
+    <header class="py-8 bg-white border-b border-gray-100 mb-12">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <h1 class="text-2xl font-black tracking-tighter cursor-pointer" onclick="location.href='index.html'">
+                HERTOWNIE</h1>
+            <a href="collection.html"
+                class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-black transition">Back to
+                Shop</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 pb-24">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+
+            <div class="lg:col-span-7 space-y-12">
+
+                <section>
+                    <div class="flex items-center gap-4 mb-8">
+                        <span
+                            class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold">1</span>
+                        <h2 class="text-xl font-extrabold tracking-tight uppercase">Shipping Information</h2>
+                    </div>
+
+                    <form id="checkout-form" class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="text-[10px] font-bold uppercase text-gray-400 mb-2 block">Email
+                                Address</label>
+                            <input type="email" id="email" required placeholder="name@company.com"
+                                class="w-full p-4 bg-white border border-gray-200 rounded-none text-sm outline-none transition">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-400 mb-2 block">First Name</label>
+                            <input type="text" id="fName" required oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')"
+                                class="w-full p-4 bg-white border border-gray-200 rounded-none text-sm outline-none transition">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-400 mb-2 block">Last Name</label>
+                            <input type="text" id="lName" required oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')"
+                                class="w-full p-4 bg-white border border-gray-200 rounded-none text-sm outline-none transition">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="text-[10px] font-bold uppercase text-gray-400 mb-2 block">Address</label>
+                            <input type="text" id="address" required placeholder="Street name and house number"
+                                class="w-full p-4 bg-white border border-gray-200 rounded-none text-sm outline-none transition">
+                        </div>
+                        <div class="col-span-1">
+                            <label class="text-[10px] font-bold uppercase text-gray-400 mb-2 block">City</label>
+                            <input type="text" id="city" required oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')"
+                                class="w-full p-4 bg-white border border-gray-200 rounded-none text-sm outline-none transition">
+                        </div>
+                        <div class="col-span-1">
+                            <label class="text-[10px] font-bold uppercase text-gray-400 mb-2 block">Postal Code</label>
+                            <input type="tel" id="pincode" pattern="[0-9]{10}" maxlength="6" minlength="6" required
+                                class="w-full p-4 bg-white border border-gray-200 rounded-none text-sm outline-none transition">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="text-xs font-bold">Phone Number</label>
+                            <input 
+                                type="tel" 
+                                id="phone" 
+                                pattern="[6-9]{1}[0-9]{9}" 
+                                maxlength="10"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                placeholder="10 digit mobile number"
+                                required 
+                                class="w-full p-4 border border-gray-200">
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold">State</label>
+                            <input type="text" id="state" required class="w-full p-4 border">
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold">Landmark</label>
+                            <input type="text" id="landmark" class="w-full p-4 border">
+                        </div>
+                    </form>
+                </section>
+
+                <section>
+                    <div class="flex items-center gap-4 mb-8">
+                        <span
+                            class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold">2</span>
+                        <h2 class="text-xl font-extrabold tracking-tight uppercase">Payment Method</h2>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div id="card-container"
+                            class="payment-card border border-black p-5 bg-white transition-all payment-selected">
+                            <div class="flex justify-between items-center mb-6">
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="radio" name="pay" value="card" checked onchange="togglePaymentUI()"
+                                        class="w-4 h-4 accent-black">
+                                    <span class="text-xs font-bold uppercase tracking-widest">Credit / Debit Card</span>
+                                </label>
+                                <div class="flex gap-2 text-gray-300">
+                                    <i class="fa-brands fa-cc-visa text-xl"></i>
+                                    <i class="fa-brands fa-cc-mastercard text-xl"></i>
+                                </div>
+                            </div>
+                            <div id="card-fields" class="grid grid-cols-2 gap-4">
+                                <input type="text" placeholder="Card Number"
+                                    class="col-span-2 p-3 border border-gray-100 text-sm outline-none">
+                                <input type="text" placeholder="MM/YY"
+                                    class="p-3 border border-gray-100 text-sm outline-none">
+                                <input type="text" placeholder="CVC"
+                                    class="p-3 border border-gray-100 text-sm outline-none">
+                            </div>
+                        </div>
+
+                        <label id="cod-container"
+                            class="flex justify-between items-center p-5 border border-gray-200 bg-white cursor-pointer hover:bg-gray-50 transition">
+                            <div class="flex items-center gap-3">
+                                <input type="radio" name="pay" value="cod" onchange="togglePaymentUI()"
+                                    class="w-4 h-4 accent-black">
+                                <span class="text-xs font-bold uppercase tracking-widest">Cash on Delivery</span>
+                            </div>
+                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Pay at
+                                doorstep</span>
+                        </label>
+                    </div>
+                </section>
+
+                <button onclick="processOrder()" id="pay-btn"
+                    class="w-full bg-black text-white py-6 text-xs font-black uppercase tracking-[0.3em] hover:bg-[#1a1a1a] transition-all shadow-xl active:scale-[0.98]">
+                    Place Order
+                </button>
+            </div>
+
+            <div class="lg:col-span-5">
+                <div class="bg-white p-10 sticky top-10 shadow-sm border border-gray-50">
+                    <h3 class="text-xs font-black uppercase tracking-[0.2em] mb-10 border-b border-gray-100 pb-4">Order
+                        Summary</h3>
+
+                    <div id="checkout-items" class="space-y-8 mb-10 max-h-[400px] overflow-y-auto pr-4">
+                    </div>
+
+                    <div class="space-y-4 pt-8 border-t border-gray-100">
+                        <div class="flex justify-between text-[11px] font-bold uppercase text-gray-400 tracking-widest">
+                            <span>Subtotal</span>
+                            <div class="mt-8 mb-6 pb-6 border-b border-gray-100">
+                                <label
+                                    class="text-[10px] font-bold uppercase text-gray-400 mb-2 block tracking-widest">Have
+                                    a Coupon?</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="coupon-input" placeholder="Enter code"
+                                        class="flex-1 p-3 border border-gray-200 text-xs font-bold uppercase outline-none focus:border-black">
+                                    <button onclick="applyCoupon()"
+                                        class="bg-black text-white px-4 text-[10px] font-bold uppercase hover:bg-gray-800 transition">
+                                        Apply
+                                    </button>
+                                </div>
+                                <p id="coupon-status" class="text-[10px] mt-2 font-bold uppercase hidden"></p>
+                            </div>
+
+                            <div class="space-y-4 pt-4">
+                                <div
+                                    class="flex justify-between text-[11px] font-bold uppercase text-gray-400 tracking-widest">
+                                    <span>Subtotal</span>
+                                    <span id="subtotal">₹0</span>
+                                </div>
+                                <div id="discount-row"
+                                    class="flex justify-between text-[11px] font-bold uppercase text-green-600 tracking-widest hidden">
+                                    <span>Discount (<span id="applied-code-name"></span>)</span>
+                                    <span>- ₹<span id="discount-amount">0</span></span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="flex justify-between text-[11px] font-bold uppercase text-gray-400 tracking-widest">
+                            <span>Shipping</span>
+                            <span class="text-green-600 font-black">FREE</span>
+                        </div>
+                        <div class="flex justify-between text-xl font-black pt-6 border-t border-black mt-4">
+                            <span>TOTAL</span>
+                            <span id="final-total">₹0</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+    </main>
+
+    <script>
+        const API_URL = "http://localhost:5000";
+        let cart = JSON.parse(localStorage.getItem('clothify_bag')) || [];
+        let currentDiscount = 0;
+        let appliedCouponCode = null;
+
+        /* -----------------------------
+           UI CONTROLS
+        ----------------------------- */
+
+        function togglePaymentUI() {
+            const method = document.querySelector('input[name="pay"]:checked').value;
+            const cardFields = document.getElementById('card-fields');
+            const cardContainer = document.getElementById('card-container');
+            const codContainer = document.getElementById('cod-container');
+
+            if (method === "card") {
+                cardFields.classList.remove("hidden");
+                cardContainer.classList.add("payment-selected");
+                codContainer.classList.remove("payment-selected");
+            } else {
+                cardFields.classList.add("hidden");
+                cardContainer.classList.remove("payment-selected");
+                codContainer.classList.add("payment-selected");
+            }
+        }
+
+        /* -----------------------------
+           ORDER SUMMARY & TOTALS
+        ----------------------------- */
+
+        function renderSummary() {
+            const container = document.getElementById("checkout-items");
+            const subtotalEl = document.getElementById("subtotal");
+
+            if (cart.length === 0) {
+                container.innerHTML = `<p class="text-xs opacity-50 text-center py-10 uppercase font-bold">Your bag is empty</p>`;
+                updateTotalDisplay(0);
+                return;
+            }
+
+            let subtotal = 0;
+
+            // We generate the HTML string by mapping over the cart array
+            container.innerHTML = cart.map(item => {
+                const price = Number(item.price);
+                const qty = Number(item.quantity || 1);
+                const size = item.size || 'N/A'; // Fallback if size is missing
+                subtotal += price * qty;
+
+                return `
+            <div class="flex gap-6 items-center">
+                <div class="w-16 h-20 bg-gray-50 flex-shrink-0">
+                    <img src="${item.image}" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1">
+                    <h4 class="text-[10px] font-black uppercase tracking-widest mb-1">${item.name}</h4>
+                    <p class="text-[10px] text-gray-400 uppercase font-bold mb-1">
+                        Size: ${size} | Qty: ${qty}
+                    </p> 
+                    <p class="text-sm font-extrabold">₹${(price * qty).toLocaleString('en-IN')}</p>
+                </div>
+            </div>`;
+            }).join('');
+
+            // These must happen AFTER the loop finishes
+            if (subtotalEl) {
+                subtotalEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+            }
+            updateTotalDisplay(subtotal);
+        }
+
+        function updateTotalDisplay(subtotal) {
+            const discountRow = document.getElementById("discount-row");
+            const discountAmountEl = document.getElementById("discount-amount");
+            const codeNameEl = document.getElementById("applied-code-name");
+            const finalTotalEl = document.getElementById("final-total");
+
+            if (currentDiscount > 0) {
+                discountRow.classList.remove("hidden");
+                discountAmountEl.textContent = currentDiscount.toLocaleString('en-IN');
+                codeNameEl.textContent = appliedCouponCode;
+            } else {
+                discountRow.classList.add("hidden");
+            }
+
+            const finalTotal = subtotal - currentDiscount;
+            finalTotalEl.textContent = `₹${Math.max(0, finalTotal).toLocaleString('en-IN')}`;
+        }
+
+        /* -----------------------------
+           COUPON SYSTEM
+        ----------------------------- */
+
+        async function applyCoupon() {
+    const codeInput = document.getElementById("coupon-input").value.trim().toUpperCase();
+    if (!codeInput) {
+        showCouponStatus("Please enter a code", "text-red-500");
+        return;
+    }
+
+    const subtotal = cart.reduce((t, i) => t + (i.price * i.quantity), 0);
+
+    try {
+        const response = await fetch(`${API_URL}/api/coupons/validate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code: codeInput, cartTotal: subtotal })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            let discount = 0;
+
+            if (data.type === "percent") {
+                discount = Math.round(subtotal * (data.value / 100));
+
+                // ✅ Apply max discount cap
+                if (data.maxDiscount) {
+                    discount = Math.min(discount, data.maxDiscount);
+                }
+            } else {
+                discount = data.value;
+            }
+
+            currentDiscount = discount;
+            appliedCouponCode = data.code;
+
+            showCouponStatus(`Applied: ${data.code}`, "text-green-600");
+            updateTotalDisplay(subtotal);
+        } else {
+            showCouponStatus(data.message || "Invalid Coupon", "text-red-500");
+            resetDiscount(subtotal);
+        }
+    } catch (error) {
+        showCouponStatus("Server connection failed", "text-red-500");
+    }
+}
+
+        function showCouponStatus(message, className) {
+            const statusEl = document.getElementById("coupon-status");
+            statusEl.textContent = message;
+            statusEl.className = `text-[10px] mt-2 font-bold uppercase ${className}`;
+            statusEl.classList.remove("hidden");
+            setTimeout(() => statusEl.classList.add("hidden"), 5000);
+        }
+
+        function resetDiscount(subtotal) {
+            currentDiscount = 0;
+            appliedCouponCode = null;
+            updateTotalDisplay(subtotal);
+        }
+
+        /* -----------------------------
+           ORDER PROCESSING
+        ----------------------------- */
+
+async function processOrder() {
+    const token = localStorage.getItem("authToken") || localStorage.getItem("token");
+    const payBtn = document.getElementById("pay-btn");
+
+    if (!token) {
+        alert("Please login first");
+        location.href = "login.html";
+        return;
+    }
+
+    if (cart.length === 0) {
+        alert("Your bag is empty");
+        return;
+    }
+
+    const requiredFields = ["fName", "lName", "address", "city", "pincode", "email", "phone", "state"];
+    for (let id of requiredFields) {
+        if (!document.getElementById(id).value.trim()) {
+            alert(`Please fill in your ${id}`);
+            return;
+        }
+    }
+
+    const subtotal = cart.reduce((t, i) => t + (i.price * i.quantity), 0);
+    const finalAmount = subtotal - currentDiscount;
+    const method = document.querySelector('input[name="pay"]:checked').value;
+
+    if (method === "cod") {
+        // COD FLOW (unchanged)
+        placeOrder("cod", null);
+        return;
+    }
+
+    // 🟡 ONLINE PAYMENT FLOW (RAZORPAY)
+    try {
+        payBtn.innerText = "PROCESSING...";
+        payBtn.disabled = true;
+
+        // 🔐 Call backend to create Razorpay order
+        const res = await fetch(`${API_URL}/api/payment/create-order`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ amount: finalAmount })
+        });
+
+        const data = await res.json();
+
+        const options = {
+            key: "rzp_test_SddwuohfBT0WW9", // ✅ ONLY KEY_ID here
+            amount: data.amount,
+            currency: "INR",
+            name: "HERTOWNIE",
+            description: "Order Payment",
+            order_id: data.id,
+
+            handler: async function (response) {
+                // ✅ Verify payment on backend
+                const verifyRes = await fetch(`${API_URL}/api/payment/verify`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(response)
+                });
+
+                if (verifyRes.ok) {
+                    placeOrder("razorpay", response);
+                } else {
+                    alert("Payment verification failed");
+                }
+            },
+
+            prefill: {
+                name: document.getElementById("fName").value,
+                email: document.getElementById("email").value,
+                contact: document.getElementById("phone").value
+            },
+
+            theme: {
+                color: "#000000"
+            }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+
+        payBtn.innerText = "PLACE ORDER";
+        payBtn.disabled = false;
+
+    } catch (err) {
+        alert("Payment failed");
+        payBtn.innerText = "PLACE ORDER";
+        payBtn.disabled = false;
+    }
+}
+async function placeOrder(method, paymentResponse = null) {
+    const token = localStorage.getItem("authToken") || localStorage.getItem("token");
+
+    const subtotal = cart.reduce((t, i) => t + (i.price * i.quantity), 0);
+
+    const orderData = {
+        // ✅ FIXED: Proper structure for backend
+        items: cart.map(item => ({
+            productId: item._id,
+            name: item.name,
+            image: item.image,
+            size: item.size,
+            quantity: item.quantity,
+            price: item.price
+        })),
+
+        total: subtotal - currentDiscount,
+
+        paymentMethod: method,
+
+        // ✅ ADD THIS (important for Razorpay)
+        paymentStatus: paymentResponse ? "paid" : "pending",
+
+        paymentDetails: paymentResponse ? {
+            razorpay_order_id: paymentResponse.razorpay_order_id,
+            razorpay_payment_id: paymentResponse.razorpay_payment_id,
+            razorpay_signature: paymentResponse.razorpay_signature
+        } : {},
+
+        shippingDetails: {
+            firstName: document.getElementById("fName").value,
+            lastName: document.getElementById("lName").value,
+            email: document.getElementById("email").value,
+            phone: document.getElementById("phone").value,
+            address: document.getElementById("address").value,
+            city: document.getElementById("city").value,
+            state: document.getElementById("state").value,
+            pincode: document.getElementById("pincode").value,
+            landmark: document.getElementById("landmark").value || ""
+        }
+    };
+
+    console.log("ORDER DATA:", orderData); // 🔥 Debug (keep this for now)
+
+    const res = await fetch(`${API_URL}/api/orders`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(orderData)
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+        alert("Order placed successfully!");
+        localStorage.removeItem("clothify_bag");
+        location.href = "index.html";
+    } else {
+        console.error("ORDER ERROR:", data);
+        alert(data.message || "Order failed");
+    }
+}
+        document.addEventListener("DOMContentLoaded", () => {
+            renderSummary();
+            const savedEmail = localStorage.getItem("userEmail");
+            if (savedEmail) document.getElementById("email").value = savedEmail;
+        });
+
+        const phoneInput = document.getElementById("phone");
+
+phoneInput.addEventListener("input", function () {
+    this.value = this.value.replace(/[^0-9]/g, '');
+
+    if (this.value.length > 0 && !/^[6-9]/.test(this.value)) {
+        this.value = this.value.substring(1);
+    }
+});
+    </script>
+</body>
+
+</html>

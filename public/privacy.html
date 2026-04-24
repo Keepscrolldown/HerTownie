@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | Your Brand Name</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e84393; /* Fashionable Pink Accent */
+            --bg-color: #f9f9f9;
+            --text-color: #333;
+            --border-color: #ddd;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .breadcrumb {
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .intro-text {
+            margin-bottom: 30px;
+            font-size: 1rem;
+            color: #555;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        /* Accordion Styles */
+        .accordion-item {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .accordion-header {
+            width: 100%;
+            padding: 20px 0;
+            background: none;
+            border: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            transition: color 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            color: var(--accent-color);
+        }
+
+        .accordion-header::after {
+            content: '▼';
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding-bottom: 0;
+        }
+
+        .accordion-content p {
+            padding-bottom: 20px;
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Privacy Policy</h1>
+        <div class="breadcrumb">Home &nbsp; > &nbsp; Privacy Policy</div>
+    </div>
+
+    <div class="intro-text">
+        This Privacy Policy covers the information <strong>[HERTOWNIE]</strong> ("SHIV COLLECTION WOMEN CLOTHES") collects from the user(s) of www.yourbrand.com. This policy should be read in conjunction with our User Agreement.
+    </div>
+
+    <div class="accordion">
+        <div class="accordion-item">
+            <button class="accordion-header">Information Collection and Use</button>
+            <div class="accordion-content">
+                <p>We collect personal information such as your name, email address, and shipping details when you register or make a purchase. This helps us provide a personalized shopping experience and process your orders efficiently.</p>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <button class="accordion-header">Information Sharing and Disclosure</button>
+            <div class="accordion-content">
+                <p>We do not sell your personal data. We only share information with third-party partners (like courier services and payment gateways) necessary to complete your transactions and improve our services.</p>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <button class="accordion-header">Compliance with Laws</button>
+            <div class="accordion-content">
+                <p>We cooperate with government and law enforcement officials to enforce and comply with the law. We will disclose information about you if necessary to respond to claims and legal processes.</p>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <button class="accordion-header">Business Transfers</button>
+            <div class="accordion-content">
+                <p>In the event of a merger, acquisition, or sale of assets, your personal information may be transferred as a business asset. We will notify you via email of any such change in ownership.</p>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <button class="accordion-header">Email Policies</button>
+            <div class="accordion-content">
+                <p>By signing up, you agree to receive promotional emails. You can opt-out at any time by clicking the 'Unsubscribe' link at the bottom of our newsletters.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 HERTOWNIE. All Rights Reserved.
+    </footer>
+</div>
+
+<script>
+    document.querySelectorAll('.accordion-header').forEach(button => {
+        button.addEventListener('click', () => {
+            const accordionContent = button.nextElementSibling;
+
+            button.classList.toggle('active');
+
+            if (button.classList.contains('active')) {
+                accordionContent.style.maxHeight = accordionContent.scrollHeight + "px";
+            } else {
+                accordionContent.style.maxHeight = 0;
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

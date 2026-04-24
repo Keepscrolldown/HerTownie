@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Muse Sale | HERTOWNIE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fff; color: #1a1a1a; }
+        
+        .sale-badge {
+            background: #e11d48;
+            color: white;
+            padding: 4px 8px;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .header { border-bottom: 1px solid #eee; padding: 1.5rem 0; }
+        .header-content { max-width: 80rem; margin: 0 auto; px: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 800; letter-spacing: 0.2em; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+   <header class="header">
+    <div class="header-content px-6 flex justify-between w-full">
+        <h1 class="logo" onclick="location.href='index.html'">HERTOWNIE</h1>
+        <div class="flex items-center gap-8 text-[10px] font-bold uppercase tracking-widest">
+            <a href="index.html" class="hover:text-rose-600 transition-colors">Home</a>
+        </div>
+    </div>
+</header>
+
+    <section class="relative bg-[#f4f4f4] py-20 border-b">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <span class="text-[10px] font-black uppercase tracking-[0.5em] text-rose-600 mb-4 block">Limited Time Event</span>
+                <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-none mb-6">THE MUSE <br>SALE</h1>
+                <p class="text-sm text-gray-500 max-w-sm uppercase tracking-widest font-bold leading-relaxed mb-8">
+                    Our most coveted silhouettes for women, now available at exclusive end-of-season pricing. 
+                </p>
+                
+                <div class="flex gap-8 border-t border-gray-200 pt-8">
+                    <div>
+                        <span id="days" class="text-3xl font-black">02</span>
+                        <p class="text-[10px] uppercase font-bold tracking-widest text-gray-400">Days</p>
+                    </div>
+                    <div>
+                        <span id="hours" class="text-3xl font-black">14</span>
+                        <p class="text-[10px] uppercase font-bold tracking-widest text-gray-400">Hrs</p>
+                    </div>
+                    <div>
+                        <span id="mins" class="text-3xl font-black">59</span>
+                        <p class="text-[10px] uppercase font-bold tracking-widest text-gray-400">Mins</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="relative group">
+                <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=80" 
+                     class="w-full h-[600px] object-cover filter contrast-110" alt="Editorial Sale Image">
+                <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-all duration-500"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-white p-10 backdrop-blur-md">
+                    <p class="text-white text-5xl font-black text-center leading-none">UP TO <br> 40% OFF</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <footer class="bg-black text-white pt-20 pb-10 mt-20 text-center">
+        <p class="text-[10px] tracking-[0.3em] uppercase opacity-50">© 2026 HERTOWNIE STUDIOS</p>
+    </footer>
+
+    <script>
+    function startCountdown() {
+        // Set the target date: 3 days from "now" for demonstration
+        // In a real scenario, you'd hardcode a date like: '2026-03-15T00:00:00'
+        const targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() + 2); // 2 days from now
+        targetDate.setHours(targetDate.getHours() + 14); 
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            // Calculations for days, hours, and minutes
+            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+            // Update DOM
+            document.getElementById('days').innerText = d.toString().padStart(2, '0');
+            document.getElementById('hours').innerText = h.toString().padStart(2, '0');
+            document.getElementById('mins').innerText = m.toString().padStart(2, '0');
+
+            // If the countdown is finished
+            if (distance < 0) {
+                clearInterval(timerInterval);
+                document.querySelector('.grid').innerHTML = "<h2 class='text-4xl font-black'>SALE EXPIRED</h2>";
+            }
+        }
+
+        // Run once immediately, then every second
+        updateTimer();
+        const timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    startCountdown();
+</script>
+</body>
+</html>

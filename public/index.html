@@ -1,0 +1,792 @@
+  <!Doctype html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>HERTOWNIE | Premium Fashion</title>
+
+      <script src="https://cdn.tailwindcss.com"></script>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      />
+
+      <style>
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap");
+
+        body {
+          font-family: "Inter", sans-serif;
+        }
+
+        /* Modal & Sidebar Constraints */
+        .cart-open,
+        .modal-open {
+          overflow: hidden;
+        }
+
+        #cart-sidebar,
+        #product-modal-content {
+          transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .cart-open #cart-sidebar {
+          transform: translateX(0);
+        }
+
+        .cart-open #cart-overlay,
+        .modal-open #modal-overlay {
+          display: block;
+          opacity: 1;
+        }
+
+        .size-btn.active {
+          background: black;
+          color: white;
+          border-color: black;
+        }
+
+        /* Navigation Dropdowns */
+        .nav-item {
+          position: relative;
+        }
+
+        .dropdown-menu {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          background: white;
+          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+          min-width: 220px;
+          padding: 1rem;
+          z-index: 50;
+          border: 1px solid #f3f4f6;
+        }
+
+        .nav-item:hover .dropdown-menu {
+          display: block;
+        }
+
+        #cart-items-list::-webkit-scrollbar {
+          width: 4px;
+        }
+
+        #cart-items-list::-webkit-scrollbar-thumb {
+          background: #000;
+        }
+        header {
+          background: rgba(255, 255, 255, 0.75);
+          backdrop-filter: blur(15px) saturate(180%);
+          -webkit-backdrop-filter: blur(15px) saturate(180%);
+        }
+      </style>
+    </head>
+
+    <body class="bg-white text-black antialiased">
+      <div
+        class="bg-black text-white text-center py-2.5 text-[10px] md:text-xs tracking-[0.2em] uppercase font-bold"
+      >
+        Flat 15% OFF on Orders Above ₹1499 | Code:
+        <span class="text-yellow-400">LOVE15</span>
+      </div>
+
+      <header
+        class="sticky top-0 z-[100] bg-white/90 backdrop-blur-md border-b border-gray-100"
+      >
+        <div
+          class="max-w-7xl mx-auto px-4 md:px-8 h-16 md:h-20 flex justify-between items-center"
+        >
+          <button class="md:hidden text-xl p-2">
+            <i class="fa-solid fa-bars-staggered"></i>
+          </button>
+
+          <h1
+            class="text-2xl md:text-3xl font-black tracking-tighter cursor-pointer select-none"
+            onclick="location.href = 'index.html'"
+          >
+            HERTOWNIE
+          </h1>
+
+          <nav
+            class="hidden md:flex space-x-10 uppercase text-[11px] font-bold tracking-widest"
+          >
+            <div class="nav-item py-4 cursor-pointer">
+              New In <i class="fa-solid fa-chevron-down text-[8px] ml-1"></i>
+              <div class="dropdown-menu">
+                <a
+                  href="new_arrival.html"
+                  class="block py-2 hover:translate-x-2 transition-transform"
+                  >All New Arrivals</a
+                >
+                <a
+                  href="collection.html"
+                  class="block py-2 hover:translate-x-2 transition-transform"
+                  >Summer '26 Escape</a
+                >
+              </div>
+            </div>
+            <div class="nav-item py-4 cursor-pointer">
+              Clothing <i class="fa-solid fa-chevron-down text-[8px] ml-1"></i>
+              <div class="dropdown-menu">
+                <a
+                  href="collection.html?search=Premium%20Shirts"
+                  class="block py-2 hover:translate-x-2 transition-transform"
+                  >Premium Shirts</a
+                >
+                <a
+                  href="collection.html?search=luxury%20tees"
+                  class="block py-2 hover:translate-x-2 transition-transform"
+                  >Luxury Tees</a
+                >
+              </div>
+            </div>
+            <a
+              href="collection.html?search=dress"
+              class="py-4 hover:text-gray-500 transition"
+              >Dresses</a
+            >
+            <a
+              href="sale.html"
+              class="py-4 text-red-600 hover:text-red-700 transition"
+              >Sale</a
+            >
+          </nav>
+
+          <div
+            class="flex items-center space-x-5 md:space-x-8 uppercase text-[11px] font-bold tracking-widest"
+          >
+            <input
+              type="text"
+              id="search-input"
+              placeholder="SEARCH"
+              class="bg-transparent outline-none text-[15px] tracking-widest w-24 focus:w-40 transition-all duration-500 uppercase font-bold"
+            />
+            <button
+              id="clear-search"
+              onclick="clearSearch()"
+              class="hidden absolute right-8 text-zinc-900 hover:text-black transition-colors"
+            >
+              <i class="fa-solid fa-xmark text-[20px]"></i>
+            </button>
+            <button
+              onclick="handleSearch()"
+              class="hover:opacity-50 transition ml-2"
+            >
+              <i class="fa-solid fa-magnifying-glass text-sm"></i>
+            </button>
+
+            <button
+              class="relative hover:opacity-50 transition group"
+              onclick="toggleCart(true)"
+            >
+              <span class="hidden md:inline">Bag</span>
+              <i class="fa-solid fa-bag-shopping text-xl md:hidden"></i>
+              <span
+                id="cart-count"
+                class="bg-black text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full absolute -top-2 -right-3 md:-top-1 md:-right-4"
+                >0</span
+              >
+            </button>
+
+            <div id="auth-section" class="flex items-center">
+              <a
+                href="login.html"
+                class="hover:opacity-50 transition flex items-center"
+              >
+                <i class="fa-regular fa-user text-xl md:hidden"></i>
+                <span class="hidden md:inline">Login</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="relative h-[50vh] md:h-[75vh] overflow-hidden">
+        <div
+          id="hero-slider"
+          class="absolute inset-0 w-full h-full flex transition-transform duration-1000 ease-in-out"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80"
+            class="min-w-full h-full object-cover"
+            alt="Slide 1"
+          />
+          <img
+            src="https://images.unsplash.com/photo-1604882767135-b41fac508fff?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            class="min-w-full h-full object-contain-cover"
+            alt="Slide 2"
+          />
+          <img
+            src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            class="min-w-full h-full object-contain-cover"
+            alt="Slide 3"
+          />
+        </div>
+        <div
+          class="absolute inset-0 bg-black/30 flex flex-col justify-center items-center text-white text-center p-6 pointer-events-none"
+        >
+          <h2 class="text-xs font-bold uppercase tracking-[0.4em] mb-4">
+            Summer Series
+          </h2>
+          <h2
+            class="text-4xl md:text-7xl font-light tracking-[0.2em] uppercase mb-8"
+          >
+            Modern Luxe
+          </h2>
+          <button
+            class="px-10 py-4 bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-colors duration-500 pointer-events-auto"
+            onclick="location.href = 'collection.html'"
+          >
+            Discover Now
+          </button>
+        </div>
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex space-x-3">
+          <div
+            class="slider-dot w-2 h-2 rounded-full bg-white/50 transition-all duration-300"
+          ></div>
+          <div
+            class="slider-dot w-2 h-2 rounded-full bg-white/50 transition-all duration-300"
+          ></div>
+          <div
+            class="slider-dot w-2 h-2 rounded-full bg-white/50 transition-all duration-300"
+          ></div>
+        </div>
+      </section>
+
+      <main class="max-w-7xl mx-auto px-4 md:px-8 py-16">
+        <h3
+          class="text-xs font-bold uppercase tracking-[0.5em] mb-12 text-center opacity-40"
+        >
+          Featured Pieces
+        </h3>
+        <div id="products-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          <p
+            class="col-span-full text-center py-20 opacity-50 uppercase text-[10px] tracking-widest"
+          >
+            Syncing with Inventory...
+          </p>
+        </div>
+      </main>
+
+      <div
+        id="modal-overlay"
+        class="fixed inset-0 bg-black/60 z-[300] hidden opacity-0 transition-opacity backdrop-blur-md"
+        onclick="closeModal()"
+      ></div>
+      <div
+        id="product-modal"
+        class="fixed inset-0 z-[301] hidden flex items-center justify-center p-4"
+      >
+        <div
+          id="product-modal-content"
+          class="bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto md:flex shadow-2xl relative translate-y-10 transition-transform"
+        >
+          <button
+            onclick="closeModal()"
+            class="absolute top-4 right-6 text-3xl font-thin z-10"
+          >
+            &times;
+          </button>
+          <div class="md:w-1/2 bg-gray-50">
+            <img id="modal-img" src="" class="w-full h-full object-cover" />
+          </div>
+          <div class="md:w-1/2 p-8 md:p-12 space-y-6">
+            <p
+              id="modal-cat"
+              class="text-[10px] text-gray-400 uppercase tracking-[0.3em] font-bold"
+            ></p>
+            <h2
+              id="modal-name"
+              class="text-3xl font-light uppercase tracking-tighter"
+            ></h2>
+            <p id="modal-price" class="text-xl font-bold"></p>
+            <p
+              id="modal-desc"
+              class="text-sm text-gray-600 leading-relaxed font-light"
+            >
+              Premium quality fabric sourced sustainably.
+            </p>
+            <div class="space-y-4 pt-4 border-t border-gray-100">
+              <p class="text-[10px] font-bold uppercase tracking-widest">
+                Select Size
+              </p>
+              <div class="flex gap-2">
+                <button
+                  onclick="selectSize(this)"
+                  class="size-btn border border-gray-200 px-5 py-3 text-[10px] font-bold transition hover:border-black uppercase"
+                >
+                  S
+                </button>
+                <button
+                  onclick="selectSize(this)"
+                  class="size-btn border border-gray-200 px-5 py-3 text-[10px] font-bold transition hover:border-black uppercase"
+                >
+                  M
+                </button>
+                <button
+                  onclick="selectSize(this)"
+                  class="size-btn border border-gray-200 px-5 py-3 text-[10px] font-bold transition hover:border-black uppercase"
+                >
+                  L
+                </button>
+                <button
+                  onclick="selectSize(this)"
+                  class="size-btn border border-gray-200 px-5 py-3 text-[10px] font-bold transition hover:border-black uppercase"
+                >
+                  XL
+                </button>
+              </div>
+            </div>
+            <button
+              id="modal-add-btn"
+              class="w-full bg-black text-white py-5 font-bold uppercase text-[11px] tracking-[0.3em] hover:bg-zinc-800 transition"
+            >
+              Add to Bag
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="cart-overlay"
+        class="fixed inset-0 bg-black/40 z-[200] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm"
+        onclick="toggleCart(false)"
+      ></div>
+      <div
+        id="cart-sidebar"
+        class="fixed top-0 right-0 h-full w-full sm:w-[450px] bg-white z-[201] translate-x-full transition-transform duration-500 ease-in-out shadow-2xl flex flex-col"
+      >
+        <div class="p-8 border-b flex justify-between items-center">
+          <h2 class="text-lg font-bold tracking-widest uppercase">Your Bag</h2>
+          <button onclick="toggleCart(false)" class="text-4xl font-thin">
+            &times;
+          </button>
+        </div>
+        <div
+          id="cart-items-list"
+          class="flex-1 overflow-y-auto p-8 space-y-8"
+        ></div>
+        <div class="p-8 border-t bg-gray-50">
+          <div class="flex justify-between items-center mb-4">
+            <span class="uppercase text-[11px] font-bold opacity-60"
+              >Subtotal</span
+            >
+            <span id="cart-subtotal" class="text-xl font-bold">₹0</span>
+          </div>
+          <button
+            onclick="handleCheckout()"
+            class="w-full bg-black text-white py-5 font-bold uppercase text-[11px] tracking-[0.3em] hover:bg-zinc-800 transition"
+          >
+            Proceed to Checkout
+          </button>
+        </div>
+      </div>
+      <footer class="bg-black text-white pt-20 pb-10 border-t border-zinc-800">
+        <div class="max-w-7xl mx-auto px-4 md:px-8">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+            <div class="space-y-6">
+              <h1 class="text-2xl font-black tracking-tighter text-white">
+                HERTOWNIE
+              </h1>
+              <p
+                class="text-[11px] text-gray-400 leading-relaxed uppercase tracking-widest"
+              >
+                Redefining modern luxury through sustainable craftsmanship and
+                timeless design.
+              </p>
+              <div class="flex space-x-5 text-gray-500">
+                <a
+                  href="https://www.instagram.com/hertownie"
+                  target="_blank"
+                  class="hover:text-white transition-colors"
+                >
+                  <i class="fa-brands fa-instagram text-lg"></i>
+                </a>
+                <a
+                  href="https://www.facebook.com/profile.php?id=61585205143161"
+                  target="_blank"
+                  class="hover:text-white transition-colors"
+                  ><i class="fa-brands fa-facebook text-lg"></i
+                ></a>
+                <a
+                  href="https://x.com/Ankita52961"
+                  type="_blank"
+                  class="hover:text-white transition-colors"
+                  ><i class="fa-brands fa-x text-lg"></i
+                ></a>
+              </div>
+            </div>
+
+            <div>
+              <h4
+                class="text-[10px] font-bold uppercase tracking-[0.3em] mb-8 text-white"
+              >
+                Customer Care
+              </h4>
+              <ul
+                class="text-[11px] space-y-4 uppercase tracking-widest text-gray-400"
+              >
+                <li>
+                  <a
+                    href="profile.html"
+                    class="hover:text-white hover:translate-x-1 inline-block transition-all"
+                    >Track Order</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="Shipping_policy.html"
+                    class="hover:text-white hover:translate-x-1 inline-block transition-all"
+                    >Shipping Policy</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="Return&Exchange.html"
+                    class="hover:text-white hover:translate-x-1 inline-block transition-all"
+                    >Returns & Exchanges</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="contactUs.html"
+                    class="hover:text-white hover:translate-x-1 inline-block transition-all"
+                    >Contact Us</a
+                  >
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4
+                class="text-[10px] font-bold uppercase tracking-[0.3em] mb-8 text-white"
+              >
+                Legal
+              </h4>
+              <ul
+                class="text-[11px] space-y-4 uppercase tracking-widest text-gray-400"
+              >
+                <li>
+                  <a
+                    href="privacy.html"
+                    class="hover:text-white hover:translate-x-1 inline-block transition-all"
+                    >Privacy Policy</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="terms&condition.html"
+                    class="hover:text-white hover:translate-x-1 inline-block transition-all"
+                    >Terms & Conditions</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="cookies.html"
+                    class="hover:text-white hover:translate-x-1 inline-block transition-all"
+                    >Cookie Settings</a
+                  >
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4
+                class="text-[10px] font-bold uppercase tracking-[0.3em] mb-8 text-white"
+              >
+                Internal
+              </h4>
+              <div class="space-y-6">
+                <a
+                  href="admin-login.html"
+                  class="inline-flex items-center text-[10px] font-bold uppercase tracking-widest bg-zinc-900 border border-zinc-800 px-5 py-3 rounded-sm hover:bg-white hover:text-black transition-all group"
+                >
+                  <i
+                    class="fa-solid fa-lock-open mr-2 text-[8px] opacity-50 group-hover:opacity-100"
+                  ></i>
+                  Admin Portal
+                </a>
+                <p class="text-[9px] text-gray-500 leading-tight tracking-wider">
+                  Authorized access only. Technical issues? <br />Contact
+                  dev-support.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="pt-8 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0"
+          >
+            <p class="text-[9px] text-gray-500 uppercase tracking-[0.2em]">
+              &copy; 2026 HERTOWNIE Premium Fashion. All Rights Reserved.
+            </p>
+
+            <div class="flex items-center space-x-6 opacity-60">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/349/349221.png"
+                class="h-4 grayscale invert"
+                alt="Visa"
+              />
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/349/349228.png"
+                class="h-4 grayscale invert"
+                alt="Mastercard"
+              />
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/196/196054.png"
+                class="h-4 grayscale invert"
+                alt="PayPal"
+              />
+            </div>
+          </div>
+        </div>
+      </footer>
+      <script>
+        const API_URL = "http://localhost:5000";
+        let allProducts = [];
+        let cart = JSON.parse(localStorage.getItem("clothify_bag")) || [];
+        let selectedSize = "";
+
+        // --- AUTH ---
+        function updateAuthUI() {
+          const authSection = document.getElementById("auth-section");
+          const token = localStorage.getItem("authToken");
+          const name = localStorage.getItem("userName");
+          if (token && name) {
+            authSection.innerHTML = `
+                      <div class="flex items-center space-x-6 border-l border-gray-100 pl-6">
+                          <div class="flex flex-col items-end">
+                              <span class="text-[8px] font-bold opacity-40 uppercase tracking-widest leading-none mb-1">Account</span>
+                              <span class="text-[10px] font-black uppercase tracking-tighter"><a href="profile.html">${name}</a></span>
+                          </div>
+                          <button onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket text-gray-400 hover:text-red-600 transition"></i></button>
+                      </div>`;
+          }
+        }
+        function logout() {
+          localStorage.clear();
+          location.reload();
+        }
+
+        // --- SLIDER LOGIC RESTORED ---
+        let currentSlide = 0;
+        const slides = document.getElementById("hero-slider");
+        const dots = document.querySelectorAll(".slider-dot");
+        function moveSlider() {
+          currentSlide = (currentSlide + 1) % 3;
+          if (slides)
+            slides.style.transform = `translateX(-${currentSlide * 100}%)`;
+          dots.forEach((dot, i) => {
+            dot.style.width = i === currentSlide ? "24px" : "8px";
+            dot.style.background =
+              i === currentSlide ? "white" : "rgba(255,255,255,0.5)";
+          });
+        }
+        setInterval(moveSlider, 4000);
+
+        // --- MODAL & CART LOGIC ---
+        function openModal(id) {
+          const product = allProducts.find((p) => p._id === id);
+          if (!product) return;
+          document.getElementById("modal-img").src = product.image;
+          document.getElementById("modal-name").innerText = product.name;
+          document.getElementById("modal-price").innerText =
+            `₹${product.price.toLocaleString()}`;
+          selectedSize = "";
+          document
+            .querySelectorAll(".size-btn")
+            .forEach((btn) => btn.classList.remove("active"));
+          document.getElementById("modal-add-btn").onclick = () => {
+            if (!selectedSize) return alert("Please select a size.");
+            addToCart(product._id, selectedSize);
+            closeModal();
+          };
+          document.body.classList.add("modal-open");
+          document.getElementById("modal-overlay").classList.remove("hidden");
+          document.getElementById("product-modal").classList.remove("hidden");
+          setTimeout(() => {
+            document.getElementById("modal-overlay").style.opacity = "1";
+            document.getElementById("product-modal-content").style.transform =
+              "translateY(0)";
+          }, 10);
+        }
+
+        function closeModal() {
+          document.getElementById("modal-overlay").style.opacity = "0";
+          document.getElementById("product-modal-content").style.transform =
+            "translateY(40px)";
+          setTimeout(() => {
+            document.body.classList.remove("modal-open");
+            document.getElementById("modal-overlay").classList.add("hidden");
+            document.getElementById("product-modal").classList.add("hidden");
+          }, 500);
+        }
+
+        function selectSize(btn) {
+          document
+            .querySelectorAll(".size-btn")
+            .forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          selectedSize = btn.innerText;
+        }
+
+        function addToCart(id, size) {
+          const product = allProducts.find((p) => p._id === id);
+          if (product) {
+            const cartId = `${id}-${size}`;
+            const existing = cart.find((item) => item.cartId === cartId);
+            if (existing) existing.quantity += 1;
+            else cart.push({ ...product, cartId, size, quantity: 1 });
+            updateUI();
+            toggleCart(true);
+          }
+        }
+
+        function changeQty(cartId, delta) {
+          const idx = cart.findIndex(
+            (i) => i.cartId === cartId || i._id === cartId,
+          );
+          if (idx > -1) {
+            cart[idx].quantity += delta;
+            if (cart[idx].quantity <= 0) cart.splice(idx, 1);
+            updateUI();
+          }
+        }
+
+        function removeItem(cartId) {
+          cart = cart.filter((i) => i.cartId !== cartId && i._id !== cartId);
+          updateUI();
+        }
+
+        function updateUI() {
+          localStorage.setItem("clothify_bag", JSON.stringify(cart));
+          document.getElementById("cart-count").innerText = cart.reduce(
+            (acc, i) => acc + i.quantity,
+            0,
+          );
+          const list = document.getElementById("cart-items-list");
+          let total = 0;
+          if (cart.length === 0) {
+            list.innerHTML =
+              "<p class='text-center py-10 opacity-30 uppercase text-xs'>Bag is empty</p>";
+            document.getElementById("cart-subtotal").innerText = "₹0";
+            return;
+          }
+          list.innerHTML = cart
+            .map((item) => {
+              total += item.price * item.quantity;
+              const idToUse = item.cartId || item._id;
+              return `
+                      <div class="flex space-x-4">
+                          <img src="${item.image}" class="w-20 h-24 object-cover" />
+                          <div class="flex-1 flex flex-col justify-between">
+                              <div class="flex justify-between">
+                                  <div>
+                                      <h4 class="text-[10px] font-black uppercase">${item.name}</h4>
+                                      <p class="text-[9px] opacity-40 uppercase">Size: ${item.size}</p>
+                                  </div>
+                                  <button onclick="removeItem('${idToUse}')" class="opacity-30 hover:opacity-100">&times;</button>
+                              </div>
+                              <div class="flex justify-between items-center">
+                                  <div class="flex items-center border">
+                                      <button onclick="changeQty('${idToUse}', -1)" class="px-2">-</button>
+                                      <span class="px-3 text-[10px] font-bold">${item.quantity}</span>
+                                      <button onclick="changeQty('${idToUse}', 1)" class="px-2">+</button>
+                                  </div>
+                                  <span class="text-xs font-bold">₹${(item.price * item.quantity).toLocaleString()}</span>
+                              </div>
+                          </div>
+                      </div>`;
+            })
+            .join("");
+          document.getElementById("cart-subtotal").innerText =
+            `₹${total.toLocaleString()}`;
+        }
+
+        async function loadProducts() {
+          const grid = document.getElementById("products-grid");
+          try {
+            const res = await fetch(`${API_URL}/api/products`);
+            allProducts = await res.json();
+            grid.innerHTML = allProducts
+              .slice(0, 8)
+              .map(
+                (p) => `
+                      <div class="group cursor-pointer" onclick="openModal('${p._id}')">
+                          <div class="relative aspect-[3/4] overflow-hidden bg-gray-50 mb-4">
+                              <img src="${p.image}" class="w-full h-full object-cover transition duration-1000 group-hover:scale-105"/>
+                              <button class="absolute bottom-4 left-4 right-4 bg-white/90 py-3 opacity-0 group-hover:opacity-100 transition uppercase text-[10px] font-bold tracking-widest">+ Quick Add</button>
+                          </div>
+                          <h3 class="font-bold text-[11px] uppercase tracking-wider">${p.name}</h3>
+                          <p class="text-sm">₹${p.price.toLocaleString()}</p>
+                      </div>`,
+              )
+              .join("");
+          } catch (e) {
+            grid.innerHTML = "<p class='col-span-full text-center'>Offline.</p>";
+          }
+        }
+
+        function toggleCart(isOpen) {
+          document.body.classList.toggle("cart-open", isOpen);
+        }
+        function handleCheckout() {
+          if (cart.length === 0) return alert("Empty!");
+          location.href = "checkout.html";
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+          loadProducts();
+          updateUI();
+          updateAuthUI();
+        });
+
+        // --- SEARCH LOGIC ---
+        function handleSearch() {
+          const input = document.getElementById("search-input");
+          const query = input.value.trim();
+          if (query) {
+            window.location.href = `collection.html?search=${encodeURIComponent(query)}`;
+          }
+        }
+
+        // Allow "Enter" key to trigger search
+        document
+          .getElementById("search-input")
+          ?.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") handleSearch();
+          });
+        // Add this to your collection.html load script
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get("search");
+
+        if (searchQuery) {
+          console.log("Filtering for:", searchQuery);
+          // You would then filter your 'allProducts' array:
+          // const filtered = allProducts.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+        }
+
+        function clearSearch() {
+          const input = document.getElementById("search-input");
+          const clearBtn = document.getElementById("clear-search");
+          input.value = "";
+          clearBtn.classList.add("hidden"); // Hide the X mark
+          // Optional: If on collection page, reload all products
+          if (window.location.pathname.includes("collection.html")) {
+            window.location.href = "collection.html";
+          }
+        }
+        // Show/Hide clear button based on input
+        document
+          .getElementById("search-input")
+          ?.addEventListener("input", (e) => {
+            const clearBtn = document.getElementById("clear-search");
+            if (e.target.value.length > 0) {
+              clearBtn.classList.remove("hidden");
+            } else {
+              clearBtn.classList.add("hidden");
+            }
+          });
+      </script>
+    </body>
+  </html>

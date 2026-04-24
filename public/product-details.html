@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | HERTOWNIE</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Premium Detail Layout */
+        .details-container { 
+            max-width: 1300px; 
+            margin: 100px auto; 
+            display: grid; 
+            grid-template-columns: 1.2fr 0.8fr; 
+            gap: 80px; 
+            padding: 40px; 
+        }
+
+        .image-section {
+            position: sticky;
+            top: 120px;
+            height: fit-content;
+        }
+
+        .product-main-img { 
+            width: 100%; 
+            border-radius: 4px; 
+            box-shadow: 20px 20px 60px rgba(0,0,0,0.05);
+            transition: var(--transition);
+        }
+
+        .meta-section { padding: 0; }
+
+        .size-options { display: flex; gap: 12px; margin: 20px 0 40px; }
+        
+        .size-btn { 
+            border: 1px solid #ddd; 
+            padding: 12px 25px; 
+            cursor: pointer; 
+            background: white; 
+            font-weight: 600;
+            transition: var(--transition);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .size-btn:hover { border-color: #000; }
+        
+        .size-btn.active { background: #000; color: #fff; border-color: #000; }
+
+        .buy-now { 
+            width: 100%; 
+            padding: 22px; 
+            background: #000; 
+            color: #fff; 
+            border: none; 
+            font-weight: 800; 
+            cursor: pointer; 
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: var(--transition);
+        }
+
+        .buy-now:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        @media (max-width: 968px) {
+            .details-container { grid-template-columns: 1fr; margin: 60px auto; gap: 40px; }
+            .image-section { position: relative; top: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">HERTOWNIE</a>
+            <div class="header-actions">
+                <a href="index.html" style="text-decoration:none; color:inherit">BACK TO SHOP</a>
+            </div>
+        </div>
+    </header>
+
+    <main id="detail-content" class="details-container">
+        <div style="text-align: center; grid-column: 1/-1; padding: 100px;">
+            <p>Gathering the details of your next favorite piece...</p>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = window.location.origin;
+
+        // 1. Fetch data from your existing products API
+        async function loadProduct() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            const contentArea = document.getElementById('detail-content');
+
+            try {
+                const response = await fetch(`${API_URL}/api/products`);
+                const products = await response.json();
+                
+                // Find the specific product that matches the ID in the URL
+                const product = products.find(p => p.id === productId);
+
+                if (!product) {
+                    contentArea.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center;">
+                            <h1>PRODUCT NOT FOUND</h1>
+                            <a href="index.html">Return to Collection</a>
+                        </div>`;
+                    return;
+                }
+
+                // 2. Call the injection function
+                contentArea.innerHTML = injectHTML(product);
+                
+                // Set Title
+                document.title = `${product.name} | Clothify`;
+
+            } catch (error) {
+                console.error('Error:', error);
+                contentArea.innerHTML = `<p>Error loading product details.</p>`;
+            }
+        }
+
+        // 3. Your Enhanced HTML Structure
+        function injectHTML(p) {
+            return `
+                <div class="image-section">
+                    <img src="${p.image}" class="product-main-img" alt="${p.name}">
+                </div>
+                <div class="meta-section">
+                    <nav style="font-size: 0.7rem; color: #888; margin-bottom: 20px; letter-spacing: 1px;">
+                        HOME / ${p.category ? p.category.toUpperCase() : 'COLLECTION'} / ${p.name.toUpperCase()}
+                    </nav>
+                    <h1 style="font-size: 3rem; margin-bottom: 10px; font-weight: 300; letter-spacing: -1px;">${p.name}</h1>
+                    <p style="font-size: 1.5rem; margin-bottom: 40px; font-weight: 700;">₹${p.price.toLocaleString('en-IN')}</p>
+                    
+                    <div class="selection-area">
+                        <p style="font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 10px;"><strong>COLOR:</strong> ESSENTIAL PIECE</p>
+                        <div style="display:flex; gap:10px; margin-bottom:30px;">
+                            <div style="width:25px; height:25px; background:#000; border-radius:50%; border:1px solid #000; outline:2px solid #fff;"></div>
+                        </div>
+                        
+                        <p style="font-size: 0.8rem; letter-spacing: 1px;"><strong>SELECT SIZE:</strong></p>
+                        <div class="size-options">
+                            ${['S', 'M', 'L', 'XL'].map(s => `<button class="size-btn">${s}</button>`).join('')}
+                        </div>
+                    </div>
+
+                    <button class="buy-now" onclick="addToCart('${p.id}')">
+                        ADD TO SHOPPING BAG
+                    </button>
+                    
+                    <div style="margin-top:60px; border-top: 1px solid #eee; padding-top:30px;">
+                        <details open>
+                            <summary style="cursor:pointer; font-weight:bold; padding-bottom:10px; text-transform:uppercase; font-size:0.8rem; letter-spacing:1px;">Composition & Care</summary>
+                            <p style="color: #666; font-size: 0.9rem; line-height: 1.8;">
+                                ${p.description || "Crafted from premium fabrics. This contemporary piece offers a refined silhouette and ultimate comfort. 100% Organic Cotton. Machine wash cold."}
+                            </p>
+                        </details>
+                    </div>
+                </div>`;
+        }
+
+        function addToCart(id) {
+            alert('Added to bag!');
+            // You can add logic here to update the cart count in the header
+        }
+
+        // Initialize
+        window.onload = loadProduct;
+    </script>
+</body>
+</html>

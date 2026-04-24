@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account | HERTOWNIE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .active-tab {
+            color: #6366f1 !important;
+            border-left: 3px solid #6366f1;
+            padding-left: 1.5rem;
+            background: linear-gradient(to right, #f8fafc, transparent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-active {
+            color: #6366f1;
+            font-weight: 800;
+        }
+
+        .step-line {
+            width: 2px;
+            height: 40px;
+            background: #e2e8f0;
+            margin-left: 7px;
+        }
+
+        .step-circle {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #e2e8f0;
+            background: white;
+        }
+
+        .step-active .step-circle {
+            background: #6366f1;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px #e0e7ff;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-[#fafafa] antialiased">
+
+    <header class="py-6 bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <h1 class="text-2xl font-black tracking-tighter cursor-pointer" onclick="location.href='index.html'">
+                HERTOWNIE</h1>
+            <nav class="flex gap-6 text-[11px] font-bold uppercase tracking-widest text-zinc-500">
+                <a href="collection.html" class="hover:text-indigo-600 transition">Shop</a>
+                <a href="index.html" class="hover:text-indigo-600 transition">Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+
+            <aside class="lg:col-span-3 space-y-8">
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                    <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-500 mb-2">Authenticated User
+                    </p>
+                    <h2 class="text-2xl font-extrabold tracking-tight text-zinc-900">
+                        Hey, <span id="user-fname-display" class="text-zinc-400 font-medium">Member</span>
+                    </h2>
+                </div>
+
+                <nav class="flex flex-col gap-2">
+                    <button onclick="switchTab('orders')" id="btn-orders"
+                        class="text-left p-4 rounded-xl text-xs font-bold uppercase tracking-widest text-zinc-400 transition-all active-tab">
+                        <i class="fa-solid fa-bag-shopping mr-3"></i> My Orders
+                    </button>
+                    <button onclick="switchTab('profile')" id="btn-profile"
+                        class="text-left p-4 rounded-xl text-xs font-bold uppercase tracking-widest text-zinc-400 transition-all">
+                        <i class="fa-solid fa-user-gear mr-3"></i> Profile Settings
+                    </button>
+                    <button onclick="switchTab('addresses')" id="btn-addresses"
+                        class="text-left p-4 rounded-xl text-xs font-bold uppercase tracking-widest text-zinc-400 transition-all">
+                        <i class="fa-solid fa-location-dot mr-3"></i> Saved Address
+                    </button>
+                    <button onclick="logout()"
+                        class="text-left p-4 text-red-500 text-xs font-bold uppercase tracking-widest hover:bg-red-50 rounded-xl mt-4 transition-all">
+                        <i class="fa-solid fa-power-off mr-3"></i> Log Out
+                    </button>
+                </nav>
+            </aside>
+
+            <section class="lg:col-span-9">
+
+                <div id="tab-orders" class="tab-content active space-y-6">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="text-lg font-bold tracking-tight">Order History</h3>
+                        <span class="px-4 py-1.5 bg-zinc-100 rounded-full text-[10px] font-bold text-zinc-500"
+                            id="order-count">0 Orders</span>
+                    </div>
+                    <div id="orders-container" class="grid grid-cols-1 gap-4">
+                    </div>
+                </div>
+
+                <div id="tab-order-details" class="tab-content space-y-8">
+                    <button onclick="switchTab('orders')"
+                        class="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-zinc-400 hover:text-black">
+                        <i class="fa-solid fa-arrow-left"></i> Back to list
+                    </button>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-2 space-y-4" id="detail-items-container"></div>
+                        <div class="space-y-6">
+                            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                                <h4 class="text-xs font-black uppercase tracking-widest mb-6 text-zinc-400">Order Status
+                                </h4>
+                                <div id="tracking-stepper" class="space-y-0"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-profile" class="tab-content">
+                    <div class="bg-white p-10 rounded-3xl border border-gray-100 shadow-sm">
+                        <h3 class="text-lg font-bold mb-8">Account Details</h3>
+                        <form id="update-profile-form" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-bold uppercase text-zinc-400">First Name</label>
+                                <input type="text" id="profile-fname" required   oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')"
+                                    class="w-full bg-zinc-50 border-none p-4 rounded-xl text-sm focus:ring-2 ring-indigo-500 outline-none">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-bold uppercase text-zinc-400">Last Name</label>
+                                <input type="text" id="profile-lname" required   oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')"
+                                    class="w-full bg-zinc-50 border-none p-4 rounded-xl text-sm focus:ring-2 ring-indigo-500 outline-none">
+                            </div>
+                            <div class="md:col-span-2 space-y-2">
+                                <label class="text-[10px] font-bold uppercase text-zinc-400">Email Address</label>
+                                <input type="email" id="profile-email" disabled
+                                    class="w-full bg-zinc-100 border-none p-4 rounded-xl text-sm text-zinc-400 cursor-not-allowed">
+                            </div>
+                            <button type="submit" id="update-btn"
+                                class="bg-zinc-900 text-white px-10 py-4 rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-black transition-all shadow-lg w-fit">
+                                Save Changes
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="tab-addresses" class="tab-content">
+                    <div class="bg-white p-10 rounded-3xl border border-gray-100 shadow-sm text-center">
+                        <div class="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fa-solid fa-map-location-dot text-2xl text-indigo-500"></i>
+                        </div>
+                        <h3 class="text-lg font-bold">Addresses Management</h3>
+                        <p class="text-zinc-400 text-sm mt-2 max-w-xs mx-auto">Update your delivery locations for faster
+                            checkout.</p>
+                        <button
+                            class="mt-8 border-2 border-zinc-100 px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-50 transition-all">
+                            Add New Address
+                        </button>
+                    </div>
+                </div>
+                <div id="return-modal"
+                    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+                    <div class="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl scale-95 transition-all"
+                        id="modal-content">
+                        <h3 class="text-xl font-bold mb-2" id="modal-title">Request Return</h3>
+                        <p class="text-zinc-400 text-sm mb-6">Please tell us why you'd like to <span
+                                id="request-type">return</span> this item.</p>
+
+                        <form id="return-form" class="space-y-4">
+                            <select id="return-reason" required
+                                class="w-full bg-zinc-50 border-none p-4 rounded-xl text-sm focus:ring-2 ring-indigo-500 outline-none">
+                                <option value="">Select a reason</option>
+                                <option value="size_too_small">Size too small</option>
+                                <option value="size_too_large">Size too large</option>
+                                <option value="defective">Defective / Damaged</option>
+                                <option value="not_as_described">Not as described</option>
+                                <option value="changed_mind">Changed my mind</option>
+                            </select>
+
+                            <textarea id="return-comments" placeholder="Additional comments (optional)"
+                                class="w-full bg-zinc-50 border-none p-4 rounded-xl text-sm focus:ring-2 ring-indigo-500 outline-none h-24 resize-none"></textarea>
+
+                            <div class="flex gap-4 pt-4">
+                                <button type="button" onclick="closeReturnModal()"
+                                    class="flex-1 py-4 text-[11px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black transition-all">Cancel</button>
+                                <button type="submit"
+                                    class="flex-1 bg-zinc-900 text-white py-4 rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-black transition-all">Submit
+                                    Request</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        const API_URL = "http://localhost:5000";
+        const token = localStorage.getItem('authToken');
+
+        if (!token) window.location.href = 'login.html';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchUserData();
+            fetchOrderHistory();
+        });
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-tab'));
+
+            const target = document.getElementById(`tab-${tab}`);
+            if (target) target.classList.add('active');
+
+            const btn = document.getElementById(`btn-${tab}`);
+            if (btn) btn.classList.add('active-tab');
+        }
+
+        async function fetchUserData() {
+            try {
+                const response = await fetch(`${API_URL}/api/users/profile`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) { if (response.status === 401) logout(); return; }
+                const user = await response.json();
+                document.getElementById('user-fname-display').innerText = user.firstName;
+                document.getElementById('profile-fname').value = user.firstName;
+                document.getElementById('profile-lname').value = user.lastName;
+                document.getElementById('profile-email').value = user.email;
+            } catch (err) { console.error(err); }
+        }
+
+        // --- Update Profile Logic ---
+        document.getElementById('update-profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('update-btn');
+            btn.innerText = "UPDATING...";
+            btn.disabled = true;
+
+            const updatedData = {
+                firstName: document.getElementById('profile-fname').value,
+                lastName: document.getElementById('profile-lname').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/api/users/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedData)
+                });
+
+                if (response.ok) {
+                    alert('Profile updated successfully!');
+                    fetchUserData();
+                }
+            } catch (err) {
+                alert('Update failed. Please try again.');
+            } finally {
+                btn.innerText = "SAVE CHANGES";
+                btn.disabled = false;
+            }
+        });
+
+        async function fetchOrderHistory() {
+            const container = document.getElementById('orders-container');
+            try {
+                const res = await fetch(`${API_URL}/api/orders/my-orders`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const orders = await res.json();
+                document.getElementById('order-count').innerText = `${orders.length} Orders`;
+
+                if (orders.length === 0) {
+                    container.innerHTML = `<div class="text-center py-20 bg-white rounded-3xl border border-dashed border-zinc-200">
+                        <p class="text-zinc-400 text-sm font-bold uppercase tracking-widest">No orders found yet</p>
+                    </div>`;
+                    return;
+                }
+
+                container.innerHTML = orders.map(order => `
+                    <div onclick="viewOrderDetails('${order._id}')" class="bg-white p-6 rounded-2xl border border-gray-100 hover:border-indigo-200 transition-all cursor-pointer group shadow-sm flex flex-wrap justify-between items-center gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-zinc-100 rounded-full flex items-center justify-center text-zinc-400"><i class="fa-solid fa-box-open text-lg"></i></div>
+                            <div>
+                                <h4 class="text-sm font-bold">#${order._id.slice(-8).toUpperCase()}</h4>
+                                <p class="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">${new Date(order.createdAt).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-8">
+                            <div class="text-right">
+                                <p class="text-sm font-black text-indigo-600">₹${order.total.toLocaleString('en-IN')}</p>
+                                <p class="text-[9px] uppercase font-bold text-zinc-400">${order.items.length} Items</p>
+                            </div>
+                            <span class="text-[9px] font-black uppercase px-3 py-1 rounded-lg ${getStatusStyle(order.status)}">${order.status}</span>
+                            <i class="fa-solid fa-chevron-right text-zinc-200 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all"></i>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) { container.innerHTML = "Error loading orders."; }
+        }
+
+        async function viewOrderDetails(orderId) {
+            try {
+                const res = await fetch(`${API_URL}/api/orders/${orderId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const order = await res.json();
+                switchTab('order-details');
+                const itemsContainer = document.getElementById('detail-items-container');
+                itemsContainer.innerHTML = `
+                    <div class="flex justify-between items-center mb-6">
+                        <h4 class="text-sm font-bold">Order Items</h4>
+                        <button onclick="generateInvoice('${order._id}')" class="bg-indigo-600 text-white px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-indigo-700">
+                            <i class="fa-solid fa-file-invoice mr-2"></i> Download Invoice
+                        </button>
+                    </div>
+                    
+                ${order.items.map(item => `
+                    <div class="bg-white p-6 rounded-3xl border border-gray-50 flex flex-wrap md:flex-nowrap gap-6 items-center shadow-sm">
+                        <img src="${item.image || 'https://placehold.co/400x600'}" class="w-24 h-32 object-cover rounded-2xl bg-zinc-100" onerror="this.src='https://placehold.co/400x600?text=Error'">
+                        
+                        <div class="flex-1">
+                            <h5 class="font-bold text-zinc-900">${item.name || 'Product'}</h5>
+                            <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mt-1">Size: ${item.size || 'N/A'} | Qty: ${item.quantity || 1}</p>
+                            <div class="mt-4"><span class="text-lg font-black tracking-tight">₹${(item.price || 0).toLocaleString('en-IN')}</span></div>
+                        </div>
+
+                        ${order.status === 'Delivered' ? (() => {
+
+    const request = order.requests?.find(r => r.itemId === item._id);
+
+    // ✅ If already requested → show status
+    if (request) {
+        return `
+        <div class="text-[10px] font-bold uppercase text-indigo-600">
+            ${request.type} Requested (${request.status})
+        </div>
+        `;
+    }
+
+    // ✅ If not requested → show buttons
+    return `
+                <div class="flex gap-2 w-full md:w-auto">
+                    <button onclick="openReturnModal('${order._id}', '${item._id}', 'return')"
+                        class="flex-1 md:flex-none border border-zinc-200 px-4 py-2 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-zinc-50">
+                        Return
+                    </button>
+                    <button onclick="openReturnModal('${order._id}', '${item._id}', 'exchange')"
+                        class="flex-1 md:flex-none border border-zinc-200 px-4 py-2 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-zinc-50">
+                        Exchange
+                    </button>
+                </div>
+                `;
+
+            })() : ''}
+                    </div>
+                `).join('')}
+                `;
+                updateTrackingStepper(order.status);
+            } catch (err) { alert("Unable to load order details"); }
+        }
+
+        function updateTrackingStepper(status) {
+            const stepper = document.getElementById('tracking-stepper');
+            const stages = ['Processing', 'Shipped', 'Delivered'];
+            stepper.innerHTML = `
+                <div class="flex items-start gap-4 ${stages.includes(status) || status === 'Placed' ? 'step-active' : ''}">
+                    <div class="flex flex-col items-center"><div class="step-circle"></div><div class="step-line"></div></div>
+                    <p class="text-[11px] uppercase tracking-widest">Order Placed</p>
+                </div>
+                <div class="flex items-start gap-4 ${['Shipped', 'Delivered'].includes(status) ? 'step-active' : ''}">
+                    <div class="flex flex-col items-center"><div class="step-circle"></div><div class="step-line"></div></div>
+                    <p class="text-[11px] uppercase tracking-widest">Shipped</p>
+                </div>
+                <div class="flex items-start gap-4 ${status === 'Delivered' ? 'step-active' : ''}">
+                    <div class="flex flex-col items-center"><div class="step-circle"></div></div>
+                    <p class="text-[11px] uppercase tracking-widest">Delivered</p>
+                </div>
+            `;
+        }
+
+        function getStatusStyle(s) {
+            if (s === 'Delivered') return 'bg-green-100 text-green-700';
+            if (s === 'Cancelled') return 'bg-red-100 text-red-700';
+            if (s === 'Shipped') return 'bg-blue-100 text-blue-700';
+            return 'bg-amber-100 text-amber-700';
+        }
+
+        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+
+async function generateInvoice(orderId) {
+
+    try {
+
+        const res = await fetch(`${API_URL}/api/orders/${orderId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const order = await res.json();
+
+        const invWindow = window.open('', '_blank');
+
+        const subtotal = order.total / 1.18;
+        const gst = order.total - subtotal;
+        const cgst = gst / 2;
+        const sgst = gst / 2;
+
+        const invId = `INV-${order._id.slice(-6).toUpperCase()}`;
+
+        invWindow.document.write(`
+
+<html>
+
+<head>
+
+<title>${invId}</title>
+
+<script src="https://cdn.tailwindcss.com"><\/script>
+
+</head>
+
+<body class="p-10 bg-gray-50">
+
+<div class="max-w-3xl mx-auto bg-white p-10 shadow">
+
+<!-- HEADER -->
+
+<div class="flex justify-between mb-10">
+
+<div>
+<h1 class="text-3xl font-black">HERTOWNIE</h1>
+<p class="text-xs text-gray-400 uppercase tracking-widest">Official Purchase Invoice</p>
+</div>
+
+<div class="text-right">
+<p class="font-bold text-lg">${invId}</p>
+<p class="text-sm">${new Date(order.createdAt).toLocaleDateString()}</p>
+</div>
+
+</div>
+
+
+<!-- CUSTOMER DETAILS -->
+
+<div class="grid grid-cols-2 gap-8 mb-8">
+
+<div>
+
+<p class="text-xs font-bold text-gray-400 uppercase mb-1">Ship To</p>
+
+<p class="font-bold text-lg">
+${order.shippingDetails.firstName || ''} ${order.shippingDetails.lastName || ''}
+</p>
+
+<p class="text-sm text-gray-600">
+${order.shippingDetails.address || ''}
+</p>
+
+<p class="text-sm text-gray-600">
+${order.shippingDetails.city || ''}, ${order.shippingDetails.state || ''}
+</p>
+
+<p class="text-sm text-gray-600">
+${order.shippingDetails.pincode || ''}
+</p>
+
+<p class="text-sm font-semibold mt-2">
+📞 +91 ${order.shippingDetails.phone || ''}
+</p>
+
+</div>
+
+<div class="text-right">
+
+<p class="text-xs font-bold text-gray-400 uppercase mb-1">Payment Method</p>
+
+<p class="font-semibold uppercase">
+${order.paymentMethod || 'Online'}
+</p>
+
+</div>
+
+</div>
+
+
+<!-- PRODUCT TABLE -->
+
+<table class="w-full border">
+
+<thead class="bg-gray-100">
+
+<tr>
+
+<th class="p-3 text-left text-xs uppercase font-bold">Product</th>
+
+<th class="p-3 text-center text-xs uppercase font-bold">Qty</th>
+
+<th class="p-3 text-right text-xs uppercase font-bold">Price</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+${order.items.map(item => `
+
+<tr class="border-t">
+
+<td class="p-3">
+
+<p class="font-semibold">${item.name}</p>
+
+<p class="text-xs text-gray-500">
+Size: ${item.size || 'N/A'}
+</p>
+
+</td>
+
+<td class="p-3 text-center">
+${item.quantity}
+</td>
+
+<td class="p-3 text-right font-semibold">
+₹${(item.price * item.quantity).toLocaleString('en-IN')}
+</td>
+
+</tr>
+
+`).join('')}
+
+</tbody>
+
+</table>
+
+
+<!-- TOTAL -->
+
+<div class="mt-8 w-64 ml-auto text-sm">
+
+<div class="flex justify-between">
+<span>Subtotal (Excl. GST)</span>
+<span>₹${subtotal.toFixed(2)}</span>
+</div>
+
+<div class="flex justify-between">
+<span>CGST (9%)</span>
+<span>₹${cgst.toFixed(2)}</span>
+</div>
+
+<div class="flex justify-between">
+<span>SGST (9%)</span>
+<span>₹${sgst.toFixed(2)}</span>
+</div>
+
+<div class="flex justify-between font-bold border-t pt-2 mt-2 text-lg">
+<span>Total</span>
+<span>₹${order.total.toLocaleString('en-IN')}</span>
+</div>
+
+</div>
+
+
+<!-- FOOTER -->
+
+<div class="mt-16 text-center text-xs text-gray-400 uppercase font-semibold">
+
+<p>Thank you for shopping with HERTOWNIE</p>
+<p>This is a system generated invoice</p>
+
+</div>
+
+
+<!-- PRINT BUTTON -->
+
+<div class="mt-10 text-center">
+
+<button onclick="window.print()" 
+class="bg-black text-white px-10 py-3 rounded-full text-sm font-bold">
+
+Print Invoice
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+
+</html>
+
+        `);
+
+        invWindow.document.close();
+
+    } catch (err) {
+
+        console.error(err);
+        alert("Failed to generate invoice");
+
+    }
+}
+        let currentRequest = { orderId: null, itemId: null, type: null };
+
+        function openReturnModal(orderId, itemId, type) {
+            currentRequest = { orderId, itemId, type };
+            document.getElementById('modal-title').innerText = type === 'return' ? 'Request Return' : 'Request Exchange';
+            document.getElementById('request-type').innerText = type;
+            document.getElementById('return-modal').classList.remove('hidden');
+            document.getElementById('return-modal').classList.add('flex');
+        }
+
+        function closeReturnModal() {
+            document.getElementById('return-modal').classList.add('hidden');
+            document.getElementById('return-modal').classList.remove('flex');
+        }
+
+        document.getElementById('return-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const payload = {
+                orderId: currentRequest.orderId,
+                itemId: currentRequest.itemId,
+                type: currentRequest.type, // 'return' or 'exchange'
+                reason: document.getElementById('return-reason').value,
+                comments: document.getElementById('return-comments').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/api/orders/request-action`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    alert(`Your ${currentRequest.type} request has been submitted! Our team will review it shortly.`);
+                    closeReturnModal();
+                } else {
+                    const err = await response.json();
+                    alert(err.message || "Something went wrong.");
+                }
+            } catch (err) {
+                console.error("Request failed:", err);
+            }
+        });
+    </script>
+</body>
+
+</html>

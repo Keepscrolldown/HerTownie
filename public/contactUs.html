@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | HERTOWNIE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #000000;
+            --white: #ffffff;
+            --gray-light: #f5f5f5;
+            --gray-medium: #888888;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--white);
+            color: var(--black);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .contact-wrapper {
+            width: 100%;
+            max-width: 1100px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 600px;
+            border: 1px solid var(--black);
+            margin: 20px;
+        }
+
+        /* Branding Side */
+        .info-side {
+            background-color: var(--black);
+            color: var(--white);
+            padding: 80px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .info-side h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            margin: 0;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .info-side p {
+            line-height: 1.6;
+            max-width: 300px;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .home-link {
+            text-decoration: none;
+            color: var(--white);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border-bottom: 1px solid var(--white);
+            padding-bottom: 5px;
+            transition: 0.3s;
+            align-self: flex-start;
+        }
+
+        .home-link:hover {
+            opacity: 0.6;
+        }
+
+        /* Form Side */
+        .form-side {
+            padding: 80px 60px;
+            background: var(--white);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-group {
+            margin-bottom: 40px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px 0;
+            border: none;
+            border-bottom: 1px solid var(--black);
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            border-bottom-width: 3px;
+        }
+
+        button {
+            background: var(--black);
+            color: var(--white);
+            border: 1px solid var(--black);
+            padding: 18px 0;
+            width: 100%;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            cursor: pointer;
+            transition: 0.4s;
+        }
+
+        button:hover {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        .contact-details {
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 850px) {
+            .contact-wrapper {
+                grid-template-columns: 1fr;
+                border: none;
+            }
+            .info-side {
+                padding: 60px 40px;
+            }
+            .form-side {
+                padding: 60px 40px;
+            }
+            .info-side h1 {
+                font-size: 2.5rem;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contact-wrapper">
+        <div class="info-side">
+            <div>
+                <a href="index.html" class="home-link">Home</a>
+                <h1 style="margin-top: 40px;">HERTOWNIE</h1>
+                <p>Sophisticated style. <br>Minimalist approach. <br>Direct connection.</p>
+            </div>
+            
+            <div class="contact-details">
+                <p>Support@HERTOWNIE.com</p>
+                <p>Mumbai, IN</p>
+            </div>
+        </div>
+
+        <div class="form-side">
+            <form action="https://formspree.io/f/mojkjeqk" method="POST">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" placeholder="EMAIL@EXAMPLE.COM" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea name="message" rows="3" placeholder="YOUR MESSAGE HERE" required></textarea>
+                </div>
+
+                <button type="submit">Submit Inquiry</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

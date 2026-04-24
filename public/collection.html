@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Collection | HERTOWNIE Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap");
+
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      /* Modal & Sidebar Transitions */
+      .cart-open,
+      .modal-open {
+        overflow: hidden;
+      }
+
+      #cart-sidebar,
+      #product-modal-content {
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .cart-open #cart-sidebar {
+        transform: translateX(0);
+      }
+
+      .cart-open #cart-overlay,
+      .modal-open #modal-overlay {
+        display: block;
+        opacity: 1;
+      }
+
+      .size-btn.active {
+        background: black;
+        color: white;
+        border-color: black;
+      }
+
+      /* Minimalist Scrollbar */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 3px;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #000;
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        padding: 1.5rem 0;
+        border-top: 1px solid #f3f4f6;
+        border-bottom: 1px solid #f3f4f6;
+      }
+
+      /* Increased Info Item Size */
+      .info-item {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .info-label {
+        color: #9ca3af;
+        font-weight: 700;
+        margin-right: 6px;
+      }
+
+      .dropdown-select {
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.5rem center;
+        background-size: 1em;
+        padding-right: 2.5rem;
+      }
+
+      #cart-overlay.active {
+        display: block;
+        opacity: 1;
+      }
+
+      .cart-open #cart-sidebar {
+        transform: translateX(0) !important;
+      }
+    </style>
+  </head>
+
+  <body class="bg-white text-black antialiased custom-scrollbar">
+    <header
+      class="sticky top-0 z-[100] bg-white/90 backdrop-blur-md border-b border-gray-100"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 md:px-8 h-20 md:h-24 flex justify-between items-center"
+      >
+        <div class="flex items-center space-x-8">
+          <h1
+            class="text-3xl font-black tracking-tighter cursor-pointer"
+            onclick="location.href = 'index.html'"
+          >
+            HERTOWNIE
+          </h1>
+          <a
+            href="index.html"
+            class="hidden md:flex items-center px-6 py-2 border-2 border-zinc-100 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 hover:border-black hover:text-black transition-all duration-300"
+          >
+            <i class="fa-solid fa-house mr-3 text-[9px]"></i> Home
+          </a>
+        </div>
+
+        <div
+          class="flex items-center space-x-10 uppercase text-xs font-bold tracking-widest"
+        >
+          <div class="relative flex items-center group">
+            <input
+              type="text"
+              id="product-search"
+              oninput="handleSearch(this.value)"
+              placeholder="Search Collection..."
+              class="w-0 group-hover:w-48 md:group-hover:w-72 focus:w-48 md:focus:w-72 transition-all duration-500 bg-transparent border-b border-zinc-200 outline-none text-xs lowercase tracking-widest py-2 pr-14"
+            />
+
+            <button
+              id="clear-search"
+              onclick="clearSearch()"
+              class="hidden absolute right-8 text-zinc-900 hover:text-black transition-colors"
+            >
+              <i class="fa-solid fa-xmark text-[20px]"></i>
+            </button>
+
+            <i
+              class="fa-solid fa-magnifying-glass absolute right-0 text-zinc-400 pointer-events-none text-sm"
+            ></i>
+          </div>
+
+          <button
+            class="relative hover:opacity-50 transition group"
+            onclick="toggleCart(true)"
+          >
+            <span class="hidden md:inline">Bag</span>
+            <i class="fa-solid fa-bag-shopping text-xl md:hidden"></i>
+            <span
+              id="cart-count"
+              class="bg-black text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full absolute -top-2 -right-3 md:-top-1 md:-right-4"
+              >0</span
+            >
+          </button>
+          <div id="auth-section" class="flex items-center">
+            <a
+              href="login.html"
+              class="hover:opacity-50 transition flex items-center"
+            >
+              <i class="fa-regular fa-user text-xl md:hidden"></i>
+              <span class="hidden md:inline">Login</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 md:px-8 py-20">
+      <div
+        class="flex flex-col md:flex-row md:justify-between md:items-end mb-20"
+      >
+        <div>
+          <h2
+            class="text-xs font-bold uppercase tracking-[0.5em] text-zinc-400 mb-3"
+          >
+            Exclusive Series
+          </h2>
+          <h3 class="text-4xl font-light uppercase tracking-widest">
+            Full Collection
+          </h3>
+        </div>
+        <div class="mt-10 md:mt-0">
+          <select
+            id="category-dropdown"
+            onchange="applyFilter(this.value)"
+            class="dropdown-select bg-transparent border-b border-zinc-200 py-3 text-xs font-bold uppercase tracking-[0.2em] focus:outline-none cursor-pointer min-w-[250px]"
+          >
+            <option value="all">All Categories</option>
+          </select>
+        </div>
+      </div>
+
+      <div
+        id="products-grid"
+        class="grid grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-20"
+      >
+        <p
+          class="col-span-full text-center py-24 opacity-50 uppercase text-xs tracking-widest font-medium"
+        >
+          Syncing with Inventory...
+        </p>
+      </div>
+    </main>
+
+    <div
+      id="modal-overlay"
+      class="fixed inset-0 bg-black/70 z-[300] hidden opacity-0 transition-opacity backdrop-blur-sm"
+      onclick="closeModal()"
+    ></div>
+    <div
+      id="product-modal"
+      class="fixed inset-0 z-[301] hidden flex items-center justify-center p-4"
+    >
+      <div
+        id="product-modal-content"
+        class="bg-white max-w-6xl w-full max-h-[90vh] overflow-hidden md:flex shadow-2xl relative translate-y-10 transition-transform"
+      >
+        <button
+          onclick="closeModal()"
+          class="absolute top-8 right-10 text-5xl font-thin z-10 hover:rotate-90 transition-transform duration-300"
+        >
+          &times;
+        </button>
+
+        <div class="md:w-1/2 bg-zinc-50 overflow-hidden">
+          <img id="modal-img" src="" class="w-full h-full object-cover" />
+        </div>
+
+        <div
+          class="md:w-1/2 p-10 md:p-16 flex flex-col justify-between overflow-y-auto custom-scrollbar"
+        >
+          <div>
+            <p
+              id="modal-cat"
+              class="text-xs text-zinc-400 uppercase tracking-[0.4em] font-bold mb-4"
+            ></p>
+            <h2
+              id="modal-name"
+              class="text-4xl font-light uppercase tracking-tighter leading-tight mb-6"
+            ></h2>
+            <p
+              id="modal-price"
+              class="text-3xl font-bold text-zinc-900 mb-8"
+            ></p>
+
+            <div class="mb-10">
+              <h4 class="text-xs font-black uppercase tracking-widest mb-4">
+                Description
+              </h4>
+              <p
+                id="modal-desc"
+                class="text-sm text-zinc-500 leading-relaxed font-normal tracking-wide"
+              ></p>
+            </div>
+
+            <div class="info-grid mb-10">
+              <div class="info-item">
+                <span class="info-label">Type:</span>
+                <span id="info-type" class="font-semibold text-zinc-800"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Fabric:</span>
+                <span
+                  id="info-fabric"
+                  class="font-semibold text-zinc-800"
+                ></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Fit:</span>
+                <span id="info-fit" class="font-semibold text-zinc-800"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Neck:</span>
+                <span id="info-neck" class="font-semibold text-zinc-800"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-10 mt-8">
+            <div class="space-y-5">
+              <p
+                class="text-xs font-bold uppercase tracking-widest text-zinc-400"
+              >
+                Select Size
+              </p>
+              <div class="flex gap-4">
+                <button
+                  onclick="selectSize(this)"
+                  class="size-btn flex-1 border border-zinc-200 py-5 text-sm font-bold transition"
+                >
+                  S
+                </button>
+                <button
+                  onclick="selectSize(this)"
+                  class="size-btn flex-1 border border-zinc-200 py-5 text-sm font-bold transition"
+                >
+                  M
+                </button>
+                <button
+                  onclick="selectSize(this)"
+                  class="size-btn flex-1 border border-zinc-200 py-5 text-sm font-bold transition"
+                >
+                  L
+                </button>
+                <button
+                  onclick="selectSize(this)"
+                  class="size-btn flex-1 border border-zinc-200 py-5 text-sm font-bold transition"
+                >
+                  XL
+                </button>
+              </div>
+            </div>
+            <button
+              id="modal-add-btn"
+              class="w-full bg-black text-white py-8 font-bold uppercase text-xs tracking-[0.4em] hover:bg-zinc-800 transition shadow-2xl"
+            >
+              Add to Bag
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      id="cart-overlay"
+      class="fixed inset-0 bg-black/40 z-[400] hidden opacity-0 transition-opacity backdrop-blur-sm"
+      onclick="toggleCart(false)"
+    ></div>
+
+    <aside
+      id="cart-sidebar"
+      class="fixed top-0 right-0 w-full md:w-[450px] h-full bg-white z-[401] shadow-2xl transform translate-x-full transition-transform duration-500 flex flex-col"
+    >
+      <div
+        class="p-8 border-b border-gray-100 flex justify-between items-center"
+      >
+        <h3 class="text-xs font-black uppercase tracking-[0.4em]">Your Bag</h3>
+        <button
+          onclick="toggleCart(false)"
+          class="text-2xl font-thin hover:rotate-90 transition-transform"
+        >
+          &times;
+        </button>
+      </div>
+
+      <div
+        id="cart-items-container"
+        class="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar"
+      ></div>
+
+      <div class="p-8 border-t border-gray-100 space-y-6">
+        <div class="flex justify-between items-end">
+          <span
+            class="text-[10px] font-bold uppercase tracking-widest text-zinc-400"
+            >Total Amount</span
+          >
+          <span id="cart-total" class="text-2xl font-black">₹0</span>
+        </div>
+        <button
+          onclick="location.href = 'checkout.html'"
+          class="w-full bg-black text-white py-6 text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-zinc-800 transition"
+        >
+          Proceed to Checkout
+        </button>
+      </div>
+    </aside>
+
+    <footer class="bg-[#09090b] text-white pt-28 pb-16">
+      <div class="max-w-7xl mx-auto px-4 md:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-20 mb-24">
+          <div class="lg:col-span-5 space-y-10">
+            <h1 class="text-4xl font-black tracking-tighter text-white">
+              HERTOWNIE
+            </h1>
+            <p class="text-sm text-zinc-400 leading-relaxed max-w-sm">
+              Redefining modern luxury through sustainable craftsmanship and
+              timeless silhouettes. Every piece is a testament to minimalist
+              elegance.
+            </p>
+          </div>
+
+          <div class="lg:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-16">
+            <div>
+              <h4
+                class="text-xs font-bold uppercase tracking-[0.4em] mb-10 text-zinc-300"
+              >
+                Shop
+              </h4>
+              <ul
+                class="text-xs space-y-6 uppercase tracking-widest text-zinc-500 font-medium"
+              >
+                <li>
+                  <a href="#" class="hover:text-white transition-all"
+                    >New Arrivals</a
+                  >
+                </li>
+                <li>
+                  <a href="#" class="hover:text-white transition-all"
+                    >Best Sellers</a
+                  >
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4
+                class="text-xs font-bold uppercase tracking-[0.4em] mb-10 text-zinc-300"
+              >
+                Newsletter
+              </h4>
+              <form class="space-y-6">
+                <input
+                  type="email"
+                  placeholder="YOUR EMAIL"
+                  class="w-full bg-transparent border-b border-zinc-800 py-4 text-xs tracking-widest uppercase focus:outline-none focus:border-white transition-colors"
+                />
+                <button
+                  class="w-full bg-white text-black py-5 text-xs font-bold uppercase tracking-[0.3em] hover:bg-zinc-100 transition shadow-lg"
+                >
+                  Subscribe
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="pt-16 border-t border-zinc-900 text-center md:text-left">
+          <p
+            class="text-[11px] text-zinc-600 uppercase tracking-widest font-medium"
+          >
+            © 2026 HERTOWNIE Premium Fashion. All Rights Reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      /* -----------------------------
+           1. CONFIG & STATE
+        ----------------------------- */
+      const API_URL = "http://localhost:5000";
+      let allItems = [];
+      let cart = JSON.parse(localStorage.getItem("clothify_bag")) || [];
+      let selectedSize = "";
+      let searchTimeout;
+
+      /* -----------------------------
+           2. INITIALIZATION
+        ----------------------------- */
+      document.addEventListener("DOMContentLoaded", () => {
+        loadCategories();
+        loadProducts();
+        updateUI();
+        updateAuthUI();
+        setupEventListeners();
+      });
+
+      function setupEventListeners() {
+        // Product Grid Click Delegation
+        const grid = document.getElementById("products-grid");
+        if (grid) {
+          grid.addEventListener("click", (e) => {
+            const card = e.target.closest(".product-card");
+            if (card) openModal(card.dataset.id);
+          });
+        }
+
+        // Category dropdown listener
+        const dropdown = document.getElementById("category-dropdown");
+        if (dropdown) {
+          dropdown.addEventListener("change", (e) =>
+            applyFilter(e.target.value),
+          );
+        }
+      }
+
+      /* -----------------------------
+           3. DATA FETCHING
+        ----------------------------- */
+      async function loadCategories() {
+        const dropdown = document.getElementById("category-dropdown");
+        if (!dropdown) return;
+
+        try {
+          const res = await fetch(`${API_URL}/api/categories`);
+          if (!res.ok) throw new Error("Category fetch failed");
+          const categories = await res.json();
+
+          dropdown.innerHTML = `<option value="all">All Categories</option>`;
+          categories.forEach((cat) => {
+            const option = document.createElement("option");
+            option.value = cat.name;
+            option.innerText =
+              cat.name.charAt(0).toUpperCase() + cat.name.slice(1);
+            dropdown.appendChild(option);
+          });
+        } catch (e) {
+          console.warn("Categories could not be loaded, using defaults.");
+        }
+      }
+
+      async function loadProducts() {
+        const grid = document.getElementById("products-grid");
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get("search")?.toLowerCase() || "";
+
+        try {
+          const res = await fetch(`${API_URL}/api/products`);
+          if (!res.ok) throw new Error("Products fetch failed");
+          allItems = await res.json();
+
+          // Sync the search input UI if a query exists in URL
+          const searchInput = document.getElementById("product-search");
+          if (searchInput && searchQuery) {
+            searchInput.value = searchQuery;
+            document.getElementById("clear-search")?.classList.remove("hidden");
+          }
+
+          filterAndRender(searchQuery);
+        } catch (e) {
+          console.error("Fetch error:", e);
+          if (grid)
+            grid.innerHTML = `<p class="col-span-full text-center py-20 opacity-50">System Offline. Check API connection.</p>`;
+        }
+      }
+
+      /* -----------------------------
+           4. FILTER & SEARCH LOGIC
+        ----------------------------- */
+      function handleSearch(query) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          const term = query.toLowerCase().trim();
+
+          // Update URL for bookmarking
+          const newUrl = new URL(window.location);
+          term
+            ? newUrl.searchParams.set("search", term)
+            : newUrl.searchParams.delete("search");
+          window.history.replaceState({}, "", newUrl);
+
+          document
+            .getElementById("clear-search")
+            ?.classList.toggle("hidden", term.length === 0);
+          filterAndRender(term);
+        }, 300);
+      }
+
+      function clearSearch() {
+        const input = document.getElementById("product-search");
+        if (input) {
+          input.value = "";
+          document.getElementById("clear-search")?.classList.add("hidden");
+          handleSearch("");
+        }
+      }
+
+      function applyFilter(categoryValue) {
+        filterAndRender();
+      }
+
+      function filterAndRender(term = "") {
+        const dropdown = document.getElementById("category-dropdown");
+        const selectedCategory = dropdown?.value.toLowerCase() || "all";
+
+        if (!term) {
+          term =
+            document.getElementById("product-search")?.value.toLowerCase() ||
+            "";
+        }
+
+        const filtered = allItems.filter((p) => {
+          const name = (p.name || "").toLowerCase();
+          const category = (
+            typeof p.category === "object" ? p.category?.name : p.category || ""
+          ).toLowerCase();
+
+          const combined = `${name} ${category}`; // 🔥 key fix
+
+          const searchTerms = term.split(" "); // ["premium", "shirts"]
+
+          const matchesSearch = searchTerms.every((t) => combined.includes(t));
+
+          const catMatch =
+            selectedCategory === "all" || category === selectedCategory;
+
+          return matchesSearch && catMatch;
+        });
+        renderGrid(filtered, term);
+      }
+      /* --- The missing function --- */
+      function renderGrid(products, term = "") {
+        const grid = document.getElementById("products-grid");
+        if (!grid) return;
+
+        // Handle empty results
+        if (products.length === 0) {
+          grid.innerHTML = `
+            <div class="col-span-full text-center py-32 opacity-40 uppercase text-[10px] tracking-widest">
+                No items found ${term ? `for "${term}"` : ""}
+            </div>`;
+          return;
+        }
+
+        // Map through products and generate HTML
+        grid.innerHTML = products
+          .map((p) => {
+            const isOutOfStock = p.stock <= 0; // The validation you requested
+
+            return `
+            <div class="group cursor-pointer product-card ${isOutOfStock ? "opacity-60 grayscale" : ""}" data-id="${p._id}">
+                <div class="relative aspect-[3/4] overflow-hidden bg-zinc-50 mb-4">
+                    <img src="${p.image}" class="w-full h-full object-cover transition duration-1000 ${isOutOfStock ? "" : "group-hover:scale-105"}">
+                    
+                    ${
+                      isOutOfStock
+                        ? `<div class="absolute inset-0 flex items-center justify-center">
+                            <span class="bg-white/90 px-4 py-2 text-[10px] font-black tracking-widest border border-black">OUT OF STOCK</span>
+                        </div>`
+                        : `<div class="absolute bottom-4 left-4 right-4 bg-white/90 py-3 opacity-0 group-hover:opacity-100 transition uppercase text-[10px] font-bold tracking-widest text-center shadow-sm">+ Quick View</div>`
+                    }
+                </div>
+                <p class="text-[9px] text-zinc-400 uppercase tracking-widest font-bold mb-1">
+                    ${typeof p.category === "object" ? p.category.name : p.category || "Premium"}
+                </p>
+                <h3 class="font-bold text-[11px] uppercase tracking-wider">${p.name}</h3>
+                <p class="text-sm">₹${p.price.toLocaleString("en-IN")}</p>
+            </div>
+        `;
+          })
+          .join("");
+      }
+      /* -----------------------------
+           5. CART & MODAL LOGIC
+        ----------------------------- */
+      function updateUI() {
+        localStorage.setItem("clothify_bag", JSON.stringify(cart));
+        const count = cart.reduce((acc, i) => acc + i.quantity, 0);
+        const countBadge = document.getElementById("cart-count");
+        if (countBadge) countBadge.innerText = count;
+        renderCart();
+      }
+
+      function renderCart() {
+        const container = document.getElementById("cart-items-container");
+        const totalEl = document.getElementById("cart-total");
+        if (!container) return;
+
+        if (cart.length === 0) {
+          container.innerHTML = `<p class="text-center py-20 opacity-30 uppercase text-[10px] tracking-widest">Bag is empty</p>`;
+          if (totalEl) totalEl.innerText = "₹0";
+          return;
+        }
+
+        let total = 0;
+        container.innerHTML = cart
+          .map((item) => {
+            total += item.price * item.quantity;
+            return `
+                <div class="flex gap-4 group">
+                    <img src="${item.image}" class="w-20 h-24 object-cover">
+                    <div class="flex-1 flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-[10px] font-black uppercase">${item.name}</h4>
+                                <p class="text-[9px] opacity-40 uppercase">Size: ${item.size}</p>
+                            </div>
+                            <button onclick="removeItem('${item.cartId}')" class="opacity-30 hover:opacity-100 text-xl">&times;</button>
+                        </div>
+                        <div class="flex justify-between items-end">
+                            <div class="flex items-center border border-zinc-100 text-[10px]">
+                                <button onclick="changeQty('${item.cartId}', -1)" class="px-2 py-1">-</button>
+                                <span class="px-2 font-bold">${item.quantity}</span>
+                                <button onclick="changeQty('${item.cartId}', 1)" class="px-2 py-1">+</button>
+                            </div>
+                            <p class="text-xs font-bold">₹${(item.price * item.quantity).toLocaleString("en-IN")}</p>
+                        </div>
+                    </div>
+                </div>`;
+          })
+          .join("");
+        if (totalEl) totalEl.innerText = `₹${total.toLocaleString("en-IN")}`;
+      }
+
+      function addToCart(product, size) {
+        const cartId = `${product._id}-${size}`;
+        const existing = cart.find((i) => i.cartId === cartId);
+        if (existing) {
+          existing.quantity += 1;
+        } else {
+          cart.push({ ...product, cartId, size, quantity: 1 });
+        }
+        updateUI();
+        toggleCart(true);
+      }
+
+      function changeQty(cartId, delta) {
+        const idx = cart.findIndex((i) => i.cartId === cartId);
+        if (idx > -1) {
+          cart[idx].quantity += delta;
+          if (cart[idx].quantity <= 0) cart.splice(idx, 1);
+          updateUI();
+        }
+      }
+
+      function removeItem(cartId) {
+        cart = cart.filter((i) => i.cartId !== cartId);
+        updateUI();
+      }
+
+      function toggleCart(isOpen) {
+        document.body.classList.toggle("cart-open", isOpen);
+      }
+
+      function openModal(id) {
+        const product = allItems.find((p) => p._id === id);
+        if (!product) return;
+
+        document.getElementById("modal-img").src = product.image;
+        document.getElementById("modal-cat").innerText =
+          product.category || "Premium Collection";
+        document.getElementById("modal-name").innerText = product.name;
+        document.getElementById("modal-price").innerText =
+          `₹${product.price.toLocaleString("en-IN")}`;
+        document.getElementById("modal-desc").innerText =
+          product.description || "Premium fabric sourced sustainably.";
+
+        const specs = {
+          "info-type": "type",
+          "info-fabric": "fabric",
+          "info-fit": "fit",
+          "info-neck": "neck",
+        };
+        Object.entries(specs).forEach(([elId, key]) => {
+          const el = document.getElementById(elId);
+          if (el) el.innerText = product[key] || "Standard";
+        });
+
+        selectedSize = "";
+        document
+          .querySelectorAll(".size-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+
+        document.getElementById("modal-add-btn").onclick = () => {
+          if (!selectedSize) return alert("Please select a size");
+          addToCart(product, selectedSize);
+          closeModal();
+        };
+
+        const modal = document.getElementById("product-modal");
+        const overlay = document.getElementById("modal-overlay");
+        document.body.classList.add("modal-open");
+        modal.classList.remove("hidden");
+        overlay.classList.remove("hidden");
+
+        requestAnimationFrame(() => {
+          overlay.style.opacity = "1";
+          document.getElementById("product-modal-content").style.transform =
+            "translateY(0)";
+        });
+
+        const addButton = document.getElementById("modal-add-btn");
+        const isOutOfStock = product.stock <= 0;
+
+        if (isOutOfStock) {
+          addButton.innerText = "OUT OF STOCK";
+          addButton.classList.replace("bg-black", "bg-zinc-200");
+          addButton.classList.add("text-zinc-400", "cursor-not-allowed");
+          addButton.disabled = true;
+        } else {
+          addButton.innerText = "Add to Bag";
+          addButton.classList.replace("bg-zinc-200", "bg-black");
+          addButton.classList.remove("text-zinc-400", "cursor-not-allowed");
+          addButton.disabled = false;
+
+          addButton.onclick = () => {
+            if (!selectedSize) return alert("Please select a size");
+            addToCart(product, selectedSize);
+            closeModal();
+          };
+        }
+      }
+
+      function closeModal() {
+        const overlay = document.getElementById("modal-overlay");
+        const content = document.getElementById("product-modal-content");
+
+        if (overlay) overlay.style.opacity = "0";
+        if (content) content.style.transform = "translateY(40px)";
+
+        setTimeout(() => {
+          document.body.classList.remove("modal-open");
+          document.getElementById("product-modal").classList.add("hidden");
+          document.getElementById("modal-overlay").classList.add("hidden");
+        }, 400);
+      }
+
+      function selectSize(btn) {
+        document
+          .querySelectorAll(".size-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        selectedSize = btn.innerText;
+      }
+
+      /* -----------------------------
+           6. AUTH UI
+        ----------------------------- */
+      function updateAuthUI() {
+        const authSection = document.getElementById("auth-section");
+        if (!authSection) return;
+        const userName = localStorage.getItem("userName");
+
+        authSection.innerHTML = userName
+          ? `<div class="flex items-center space-x-4 border-l border-zinc-100 pl-6">
+                     <div class="flex flex-col items-start leading-none">
+                        <span class="text-[8px] font-bold opacity-30 uppercase tracking-widest mb-1">Account</span>
+                        <span class="text-[10px] font-black uppercase"><a href="profile.html">${userName}</a></span>
+                     </div>
+                     <button onclick="logout()" class="text-zinc-400 hover:text-red-600 transition-colors"><i class="fa-solid fa-arrow-right-from-bracket text-[10px]"></i></button>
+                   </div>`
+          : `<a href="login.html" class="hover:opacity-50 transition flex items-center">
+                        <i class="fa-regular fa-user text-xl md:hidden"></i>
+                        <span class="hidden md:inline">Login</span>
+                   </a>`;
+      }
+
+      function logout() {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userName");
+        location.reload();
+      }
+    </script>
+  </body>
+</html>

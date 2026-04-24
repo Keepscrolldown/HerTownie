@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account | HERTOWNIE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap");
+
+    body {
+      font-family: "Plus Jakarta Sans", sans-serif;
+    }
+
+    .hidden-form {
+      display: none;
+    }
+
+    input:focus {
+      border-color: #000 !important;
+    }
+
+    /* Transition for status dots */
+    .dot {
+      transition: all 0.3s ease;
+    }
+  </style>
+</head>
+
+<body class="bg-[#fafafa] flex items-center justify-center min-h-screen">
+  <div class="w-full max-w-md bg-white p-10 shadow-sm border border-gray-100">
+    <div class="text-center mb-10">
+      <h1 class="text-2xl font-black tracking-tighter cursor-pointer" onclick="location.href = 'index.html'">
+        HERTOWNIE
+      </h1>
+      <div class="flex justify-center gap-8 mt-8 border-b border-gray-100">
+        <button id="tab-login" onclick="switchForm('login')"
+          class="pb-4 text-[11px] font-black uppercase tracking-[0.2em] border-b-2 border-black transition-all">
+          Login
+        </button>
+        <button id="tab-signup" onclick="switchForm('signup')"
+          class="pb-4 text-[11px] font-black uppercase tracking-[0.2em] border-b-2 border-transparent text-gray-400 hover:text-black transition-all">
+          Sign Up
+        </button>
+      </div>
+    </div>
+
+    <form id="login-form" class="space-y-6" onsubmit="handleAuth(event, 'login')">
+      <div>
+        <label class="text-[10px] font-bold uppercase text-gray-400 mb-2 block tracking-widest">Email Address</label>
+        <input type="email" id="login-email" required
+          class="w-full p-4 border border-gray-100 rounded-none text-sm outline-none bg-gray-50/50" />
+      </div>
+      <div>
+        <label class="text-[10px] font-bold uppercase text-gray-400 mb-2 block tracking-widest">Password</label>
+        <input type="password" id="login-password" required
+          class="w-full p-4 border border-gray-100 rounded-none text-sm outline-none bg-gray-50/50" />
+        <a href="#" onclick="openForgotModal()"
+          class="text-[9px] uppercase font-bold text-gray-400 hover:text-black mt-2 inline-block tracking-widest">
+          Forgot Password?
+        </a>
+      </div>
+      <button type="submit"
+        class="w-full bg-black text-white py-5 text-[11px] font-black uppercase tracking-[0.3em] hover:bg-zinc-800 transition shadow-lg">
+        Sign In
+      </button>
+    </form>
+
+    <form id="signup-form" class="space-y-6 hidden-form" onsubmit="handleAuth(event, 'signup')">
+      <div class="grid grid-cols-2 gap-4">
+        <div class="col-span-1">
+          <label class="text-[10px] font-bold uppercase text-gray-400 mb-2 block tracking-widest">First Name</label>
+          <input type="text" id="signup-first" required oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')"
+            class="w-full p-4 border border-gray-100 rounded-none text-sm outline-none bg-gray-50/50" />
+        </div>
+        <div class="col-span-1">
+          <label class="text-[10px] font-bold uppercase text-gray-400 mb-2 block tracking-widest">Last Name</label>
+          <input type="text" id="signup-last" required oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')"
+            class="w-full p-4 border border-gray-100 rounded-none text-sm outline-none bg-gray-50/50" />
+        </div>
+      </div>
+      <div>
+        <label class="text-[10px] font-bold uppercase text-gray-400 mb-2 block tracking-widest">Email Address</label>
+        <input type="email" id="signup-email" required
+          class="w-full p-4 border border-gray-100 rounded-none text-sm outline-none bg-gray-50/50" />
+      </div>
+      <div class="relative">
+        <label class="text-[10px] font-bold uppercase text-gray-400 mb-2 block tracking-widest">Create Password</label>
+        <div class="relative">
+          <input type="password" id="signup-password" required oninput="validatePassword(this.value)"
+            class="w-full p-4 border border-gray-100 rounded-none text-sm outline-none bg-gray-50/50 transition-all focus:bg-white"
+            placeholder="••••••••" />
+          <button type="button" onclick="togglePassword('signup-password')"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black">
+            <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
+        </div>
+
+        <div id="password-checklist" class="mt-4 space-y-2 hidden">
+          <p id="req-length"
+            class="text-[9px] uppercase tracking-widest font-bold text-gray-400 flex items-center gap-2">
+            <span class="dot w-1.5 h-1.5 rounded-full bg-gray-300"></span> 8+
+            Characters
+          </p>
+          <p id="req-upper"
+            class="text-[9px] uppercase tracking-widest font-bold text-gray-400 flex items-center gap-2">
+            <span class="dot w-1.5 h-1.5 rounded-full bg-gray-300"></span> One
+            Uppercase
+          </p>
+          <p id="req-num-spec"
+            class="text-[9px] uppercase tracking-widest font-bold text-gray-400 flex items-center gap-2">
+            <span class="dot w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+            Number & Special Character
+          </p>
+        </div>
+      </div>
+      <p class="text-[9px] text-gray-400 uppercase tracking-widest leading-relaxed">
+        By creating an account, you agree to HERTOWNIE's
+        <a href="#" class="underline text-black">Privacy Policy</a> and
+        <a href="#" class="underline text-black">Terms of Use</a>.
+      </p>
+      <button type="submit"
+        class="w-full bg-black text-white py-5 text-[11px] font-black uppercase tracking-[0.3em] hover:bg-zinc-800 transition shadow-lg">
+        Create Account
+      </button>
+    </form>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgot-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+      <div class="bg-white p-8 w-full max-w-sm shadow-xl">
+        <h2 class="text-lg font-bold mb-6 uppercase tracking-widest">
+          Reset Password
+        </h2>
+
+        <input type="email" id="forgot-email" placeholder="Enter your email"
+          class="w-full p-4 border border-gray-200 mb-6 outline-none" />
+
+        <button onclick="sendResetLink()"
+          class="w-full bg-black text-white py-4 text-xs font-bold uppercase tracking-widest">
+          Send Reset Link
+        </button>
+
+        <button onclick="closeForgotModal()" class="mt-4 text-xs text-gray-400 hover:text-black w-full">
+          Cancel
+        </button>
+      </div>
+    </div>
+
+    <div class="mt-10 pt-10 border-t border-gray-100 text-center">
+      <p class="text-[10px] font-bold uppercase text-gray-400 tracking-widest mb-6">
+        Or continue with
+      </p>
+      <div class="flex justify-center gap-4">
+        <button class="p-4 border border-gray-100 hover:bg-gray-50 transition w-full flex justify-center">
+          <svg class="w-4 h-4" viewBox="0 0 24 24">
+            <path
+              d="M12.48 10.92v3.28h7.84c-.24 1.84-.909 3.16-2.122 4.155-1.213.995-2.915 1.76-5.718 1.76-4.664 0-8.487-3.714-8.487-8.115s3.823-8.115 8.487-8.115c2.49 0 4.416.945 5.762 2.22l2.307-2.307C18.423 1.497 15.748 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.57 0 6.264-1.155 8.355-3.255 2.112-2.112 2.78-5.07 2.78-7.425 0-.714-.06-1.397-.175-2.032H12.48z"
+              fill="currentColor" />
+          </svg>
+        </button>
+        <button class="p-4 border border-gray-100 hover:bg-gray-50 transition w-full flex justify-center">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "/api/auth";
+
+    function switchForm(type) {
+      const loginForm = document.getElementById("login-form");
+      const signupForm = document.getElementById("signup-form");
+      const loginTab = document.getElementById("tab-login");
+      const signupTab = document.getElementById("tab-signup");
+
+      if (type === "login") {
+        loginForm.classList.remove("hidden-form");
+        signupForm.classList.add("hidden-form");
+        loginTab.classList.add("border-black", "text-black");
+        loginTab.classList.remove("border-transparent", "text-gray-400");
+        signupTab.classList.remove("border-black", "text-black");
+        signupTab.classList.add("border-transparent", "text-gray-400");
+      } else {
+        signupForm.classList.remove("hidden-form");
+        loginForm.classList.add("hidden-form");
+        signupTab.classList.add("border-black", "text-black");
+        signupTab.classList.remove("border-transparent", "text-gray-400");
+        loginTab.classList.remove("border-black", "text-black");
+        loginTab.classList.add("border-transparent", "text-gray-400");
+      }
+    }
+
+    // Toggle Password visibility
+    function togglePassword(id) {
+      const input = document.getElementById(id);
+      input.type = input.type === "password" ? "text" : "password";
+    }
+
+    // Real-time Validation UI
+    function validatePassword(pass) {
+      const checklist = document.getElementById("password-checklist");
+      if (pass.length > 0) {
+        checklist.classList.remove("hidden");
+      } else {
+        checklist.classList.add("hidden");
+      }
+
+      const checks = {
+        length: pass.length >= 8,
+        upper: /[A-Z]/.test(pass),
+        numSpec: /[0-9]/.test(pass) && /[!@#$%^&*(),.?":{}|<>]/.test(pass),
+      };
+
+      updateReq("req-length", checks.length);
+      updateReq("req-upper", checks.upper);
+      updateReq("req-num-spec", checks.numSpec);
+
+      return checks.length && checks.upper && checks.numSpec;
+    }
+
+    function updateReq(id, isValid) {
+      const el = document.getElementById(id);
+      const dot = el.querySelector(".dot");
+      if (isValid) {
+        el.classList.remove("text-gray-400");
+        el.classList.add("text-green-600");
+        dot.classList.remove("bg-gray-300");
+        dot.classList.add("bg-green-600");
+      } else {
+        el.classList.add("text-gray-400");
+        el.classList.remove("text-green-600");
+        dot.classList.add("bg-gray-300");
+        dot.classList.remove("bg-green-600");
+      }
+    }
+
+    async function handleAuth(event, type) {
+      event.preventDefault();
+
+      // Password security check for Signup
+      if (type === "signup") {
+        const pass = document.getElementById("signup-password").value;
+        if (!validatePassword(pass)) {
+          alert("Please meet all password requirements before continuing.");
+          return;
+        }
+      }
+
+      const btn = event.target.querySelector("button");
+      const originalText = btn.innerText;
+
+      // UI Loading State
+      btn.innerText = "PROCESSING...";
+      btn.disabled = true;
+      btn.style.opacity = "0.7";
+
+      let payload = {};
+      let endpoint =
+        type === "login" ? `${API_URL}/login` : `${API_URL}/signup`;
+
+      if (type === "login") {
+        payload = {
+          email: document.getElementById("login-email").value,
+          password: document.getElementById("login-password").value,
+        };
+      } else {
+        payload = {
+          firstName: document.getElementById("signup-first").value,
+          lastName: document.getElementById("signup-last").value,
+          email: document.getElementById("signup-email").value,
+          password: document.getElementById("signup-password").value,
+        };
+      }
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          localStorage.setItem("authToken", data.token);
+          localStorage.setItem("userName", data.user.name);
+          localStorage.setItem("userEmail", data.user.email);
+
+          const pendingRedirect = localStorage.getItem("redirectAfterLogin");
+          window.location.href = pendingRedirect
+            ? (localStorage.removeItem("redirectAfterLogin"), pendingRedirect)
+            : "index.html";
+        } else {
+          alert(data.message || "Authentication failed");
+          resetButton(btn, originalText);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Server connection failed. Is your backend running?");
+        resetButton(btn, originalText);
+      }
+    }
+
+    function resetButton(btn, text) {
+      btn.innerText = text;
+      btn.disabled = false;
+      btn.style.opacity = "1";
+    }
+
+    function openForgotModal() {
+      document.getElementById("forgot-modal").classList.remove("hidden");
+      document.getElementById("forgot-modal").classList.add("flex");
+    }
+
+    function closeForgotModal() {
+  const modal = document.getElementById("forgot-modal");
+  modal.classList.add("hidden");
+  modal.classList.remove("flex");
+  document.getElementById("forgot-email").value = "";
+}
+
+    async function sendResetLink() {
+      const email = document.getElementById("forgot-email").value;
+      if (!email) return alert("Enter your email");
+
+      try {
+        const res = await fetch("http://localhost:5000/api/auth/forgot-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          const go = confirm("Reset link generated. Do you want to open it?");
+
+          if (go) {
+            window.location.href = data.debugLink;          }
+        } else {
+          alert(data.message || "Error");
+        }
+      } catch (err) {
+        alert("Connection failed. Check your terminal for backend errors.");
+      }
+    }
+  </script>
+</body>
+
+</html>

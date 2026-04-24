@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    :root {
+        --brand-pink: #d06078;
+        --brand-taupe: #8a7366;
+        --soft-cream: #fefcfb;
+        --border-color: #e8e1dd;
+    }
+
+    body {
+        margin: 0;
+        padding: 40px 20px;
+        font-family: 'Georgia', serif; /* Elegant, readable serif */
+        background-color: var(--soft-cream);
+        color: #444;
+        display: flex;
+        justify-content: center;
+    }
+
+    .policy-card {
+        max-width: 600px;
+        background: white;
+        padding: 60px;
+        border-radius: 4px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        border: 1px solid var(--border-color);
+        text-align: center;
+    }
+
+    .logo-text {
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        font-size: 0.8rem;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--brand-taupe);
+        margin-bottom: 40px;
+        display: block;
+    }
+
+    h1 {
+        font-weight: normal;
+        color: var(--brand-pink);
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+    }
+
+    .divider {
+        width: 50px;
+        height: 1px;
+        background: var(--brand-taupe);
+        margin: 20px auto;
+        opacity: 0.4;
+    }
+
+    .status-badge {
+        display: inline-block;
+        border: 1px solid var(--brand-pink);
+        color: var(--brand-pink);
+        padding: 4px 15px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 30px;
+        font-family: sans-serif;
+    }
+
+    .message {
+        font-size: 1.05rem;
+        line-height: 1.8;
+        color: #555;
+        margin-bottom: 30px;
+    }
+
+    .coming-soon-box {
+        background: #faf7f6;
+        padding: 25px;
+        border-radius: 8px;
+        border: 1px dashed var(--brand-taupe);
+    }
+
+    .coming-soon-box h2 {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        color: var(--brand-taupe);
+        margin-bottom: 10px;
+        letter-spacing: 1px;
+    }
+
+    .coming-soon-box p {
+        font-size: 0.9rem;
+        margin: 0;
+        font-style: italic;
+    }
+
+    .contact-link {
+        margin-top: 40px;
+        display: block;
+        color: var(--brand-taupe);
+        text-decoration: underline;
+        font-size: 0.85rem;
+    }
+</style>
+</head>
+<body>
+
+<div class="policy-card">
+    <span class="logo-text">HERTOWNIE</span>
+    
+    <div class="status-badge">Notice: Launch Phase</div>
+    
+    <h1>Returns & Exchanges</h1>
+    <div class="divider"></div>
+    
+    <div class="message">
+        At this time, <strong>HERTOWNIE does not offer returns or exchanges.</strong> To ensure we can provide the best local experience and maintain our boutique standards, all current purchases are final sale.
+    </div>
+
+    <div class="coming-soon-box">
+        <h2>Coming Soon</h2>
+        <p>We are currently developing a flexible return and exchange policy to better serve our community. Stay tuned for updates!</p>
+    </div>
+
+    <a href="contactUs.html" class="contact-link">Questions? Contact Community Support</a>
+</div>
+
+</body>
+</html>
