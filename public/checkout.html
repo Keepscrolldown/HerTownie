@@ -129,32 +129,30 @@
                     </div>
 
                     <div class="space-y-4">
-                        <div id="card-container"
-                            class="payment-card border border-black p-5 bg-white transition-all payment-selected">
-                            <div class="flex justify-between items-center mb-6">
-                                <label class="flex items-center gap-3 cursor-pointer">
+                        <div id="card-container" class="payment-card border border-black p-5 bg-white transition-all payment-selected">
+                            <div class="flex justify-between items-center">
+                                <label class="flex items-center gap-3 cursor-pointer w-full">
                                     <input type="radio" name="pay" value="card" checked onchange="togglePaymentUI()"
                                         class="w-4 h-4 accent-black">
-                                    <span class="text-xs font-bold uppercase tracking-widest">Pay via Netbanking</span>
+                                    <span class="text-xs font-bold uppercase tracking-widest">Pay Online / Razorpay</span>
                                 </label>
-                                <div class="flex gap-2 text-gray-300">
+                                <div class="flex gap-2 text-gray-400">
                                     <i class="fa-brands fa-cc-visa text-xl"></i>
                                     <i class="fa-brands fa-cc-mastercard text-xl"></i>
                                 </div>
                             </div>
                         </div>
-
-                        <label id="cod-container"
-                            class="flex justify-between items-center p-5 border border-gray-200 bg-white cursor-pointer hover:bg-gray-50 transition">
-                            <div class="flex items-center gap-3">
-                                <input type="radio" name="pay" value="cod" onchange="togglePaymentUI()"
-                                    class="w-4 h-4 accent-black">
-                                <span class="text-xs font-bold uppercase tracking-widest">Cash on Delivery</span>
-                            </div>
-                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Pay at
-                                doorstep</span>
-                        </label>
-                    </div>
+                        
+                        <div id="cod-container" class="payment-card border border-gray-200 p-5 bg-white transition-all mt-4">
+                            <label class="flex justify-between items-center cursor-pointer w-full">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="pay" value="cod" onchange="togglePaymentUI()"
+                                        class="w-4 h-4 accent-black">
+                                    <span class="text-xs font-bold uppercase tracking-widest">Cash on Delivery</span>
+                                </div>
+                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Pay at doorstep</span>
+                            </label>
+                        </div>                    </div>
                 </section>
 
                 <button onclick="processOrder()" id="pay-btn"
