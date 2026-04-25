@@ -14,6 +14,15 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
+        .payment-card {
+    border: 1px solid #e5e7eb;
+}
+
+.payment-selected {
+    border: 2px solid black;
+    background-color: #f9fafb;
+}
+
         input:focus {
             border-color: #000 !important;
         }
@@ -129,7 +138,7 @@
                     </div>
 
                     <div class="space-y-4">
-                        <div id="card-container" class="payment-card border border-black p-5 bg-white transition-all payment-selected">
+                        <div id="card-container" class="payment-card p-5 bg-white transition-all payment-selected">
                             <div class="flex justify-between items-center">
                                 <label class="flex items-center gap-3 cursor-pointer w-full">
                                     <input type="radio" name="pay" value="card" checked onchange="togglePaymentUI()"
@@ -152,7 +161,8 @@
                                 </div>
                                 <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Pay at doorstep</span>
                             </label>
-                        </div>                    </div>
+                        </div>                    
+                    </div>
                 </section>
 
                 <button onclick="processOrder()" id="pay-btn"
