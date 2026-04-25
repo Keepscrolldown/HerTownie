@@ -1,18 +1,15 @@
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
-
     orderId: {
         type: String,
         unique: true
     },
-
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
-
     items: [
         {
             productId: {
@@ -24,7 +21,8 @@ const orderSchema = new mongoose.Schema({
                 type: String,
                 required: true
             },
-            image: String,
+            // Updated from String to [String] to accept the array in your error message
+            image: [String], 
             size: String,
             quantity: {
                 type: Number,
@@ -36,11 +34,9 @@ const orderSchema = new mongoose.Schema({
             }
         }
     ],
-
-    // ✅ ADD THIS BLOCK
     requests: [
         {
-            itemId: String, // refers to item._id
+            itemId: String, 
             type: {
                 type: String,
                 enum: ["return", "exchange"]
@@ -58,30 +54,24 @@ const orderSchema = new mongoose.Schema({
             }
         }
     ],
-
     total: {
         type: Number,
         required: true
     },
-
     paymentMethod: {
-  type: String,
-  enum: ["card", "cod", "upi", "razorpay"]
-},
-
-// ✅ NEW BLOCK
-paymentStatus: {
-    type: String,
-    enum: ["pending", "paid", "failed"],
-    default: "pending"
-},
-
-paymentDetails: {
-    razorpay_order_id: String,
-    razorpay_payment_id: String,
-    razorpay_signature: String
-},
-
+        type: String,
+        enum: ["card", "cod", "upi", "razorpay"]
+    },
+    paymentStatus: {
+        type: String,
+        enum: ["pending", "paid", "failed"],
+        default: "pending"
+    },
+    paymentDetails: {
+        razorpay_order_id: String,
+        razorpay_payment_id: String,
+        razorpay_signature: String
+    },
     shippingDetails: {
         firstName: { type: String, required: true },
         lastName: { type: String, required: true },
@@ -93,7 +83,6 @@ paymentDetails: {
         state: { type: String, required: true },
         pincode: { type: String, required: true }
     },
-
     status: {
         type: String,
         enum: [
@@ -106,7 +95,6 @@ paymentDetails: {
         ],
         default: "Processing"
     }
-
 }, { timestamps: true });
 
 module.exports = mongoose.model("Order", orderSchema);
