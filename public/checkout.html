@@ -15,13 +15,13 @@
         }
 
         .payment-card {
-    border: 1px solid #e5e7eb;
-}
-
-.payment-selected {
-    border: 2px solid black;
-    background-color: #f9fafb;
-}
+            border: 1px solid #e5e7eb;
+        }
+        
+        .payment-selected {
+            border: 2px solid black;
+            background-color: #f9fafb;
+        }
 
         input:focus {
             border-color: #000 !important;
@@ -132,11 +132,10 @@
 
                 <section>
                     <div class="flex items-center gap-4 mb-8">
-                        <span
-                            class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold">2</span>
+                        <span class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold">2</span>
                         <h2 class="text-xl font-extrabold tracking-tight uppercase">Payment Method</h2>
                     </div>
-
+                
                     <div class="space-y-4">
                         <div id="card-container" class="payment-card p-5 bg-white transition-all payment-selected">
                             <div class="flex justify-between items-center">
@@ -152,7 +151,7 @@
                             </div>
                         </div>
                         
-                        <div id="cod-container" class="payment-card border border-gray-200 p-5 bg-white transition-all mt-4">
+                        <div id="cod-container" class="payment-card p-5 bg-white transition-all border border-gray-200">
                             <label class="flex justify-between items-center cursor-pointer w-full">
                                 <div class="flex items-center gap-3">
                                     <input type="radio" name="pay" value="cod" onchange="togglePaymentUI()"
@@ -161,10 +160,9 @@
                                 </div>
                                 <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Pay at doorstep</span>
                             </label>
-                        </div>                    
+                        </div>                     
                     </div>
                 </section>
-
                 <button onclick="processOrder()" id="pay-btn"
                     class="w-full bg-black text-white py-6 text-xs font-black uppercase tracking-[0.3em] hover:bg-[#1a1a1a] transition-all shadow-xl active:scale-[0.98]">
                     Place Order
@@ -236,21 +234,28 @@
         ----------------------------- */
 
         function togglePaymentUI() {
-            const method = document.querySelector('input[name="pay"]:checked').value;
-            const cardFields = document.getElementById('card-fields');
-            const cardContainer = document.getElementById('card-container');
-            const codContainer = document.getElementById('cod-container');
-
-            if (method === "card") {
-                cardFields.classList.remove("hidden");
-                cardContainer.classList.add("payment-selected");
-                codContainer.classList.remove("payment-selected");
-            } else {
-                cardFields.classList.add("hidden");
-                cardContainer.classList.remove("payment-selected");
-                codContainer.classList.add("payment-selected");
-            }
+        const method = document.querySelector('input[name="pay"]:checked').value;
+        const cardContainer = document.getElementById('card-container');
+        const codContainer = document.getElementById('cod-container');
+    
+        if (method === "card") {
+            // Highlight Card
+            cardContainer.classList.add("payment-selected");
+            cardContainer.classList.remove("border-gray-200");
+            
+            // Reset COD
+            codContainer.classList.remove("payment-selected");
+            codContainer.classList.add("border-gray-200");
+        } else {
+            // Highlight COD
+            codContainer.classList.add("payment-selected");
+            codContainer.classList.remove("border-gray-200");
+            
+            // Reset Card
+            cardContainer.classList.remove("payment-selected");
+            cardContainer.classList.add("border-gray-200");
         }
+    }
 
         /* -----------------------------
            ORDER SUMMARY & TOTALS
